@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,4 +56,7 @@ private: // メンバ変数
 	Model* model_ = nullptr;
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
+	DebugCamera* debugCamera_ = nullptr;
+
+	float inputFloat3[3] = { 0, 0, 0 };
 };

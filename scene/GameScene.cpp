@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "ImGuiManager.h"
+#include "PrimitiveDrawer.h"
 #include <cassert>
 
 GameScene::GameScene() {}
@@ -7,6 +9,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete sprite_;
 	delete model_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -27,9 +30,17 @@ void GameScene::Initialize() {
 	////音声生成
 	//audio_->PlayWave(soundDateHandle_);
 	voiceHandle_ = audio_->PlayWave(soundDateHandle_, true);
+
+	//デバックカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
+
+	//ライン描画が参照するビュープロジェクションを指定する(アドレス渡し)
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
+	//デバッグカメラの更新
+	debugCamera_->Update();
 
 	//スプライトの今の座標を取得
 	Vector2 position = sprite_->GetPosition();
@@ -44,6 +55,13 @@ void GameScene::Update() {
 		audio_->StopWave(voiceHandle_);
 	}
 
+	//デバックテキストの表示
+	ImGui::Begin("Debug1");
+	ImGui::InputFloat3("InputFloat3", inputFloat3);
+	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 100.0f);
+	ImGui::End();
+	//デモウィンドウ
+	ImGui::ShowDemoWindow();
 }
 
 void GameScene::Draw() {
@@ -74,11 +92,13 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
 
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
+	PrimitiveDrawer::GetInstance()->DrawLine3d({0, 0, 0}, {0, 10, 0}, {1.0f, 0.0f, 0.0f, 1.0f});
 #pragma endregion
 
 #pragma region 前景スプライト描画
