@@ -6,6 +6,7 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete sprite_;
+	delete model_;
 }
 
 void GameScene::Initialize() {
@@ -16,6 +17,7 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("mario.png");
 	sprite_ = Sprite::Create(textureHandle_, { 100, 50 });
+	model_ = Model::Create();
 }
 
 void GameScene::Update() {
