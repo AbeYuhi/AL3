@@ -49,5 +49,5 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	uint32_t textureHandle = 0;
-	Model* _model = 0;
+	Model* model_ = 0;
 };

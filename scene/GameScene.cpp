@@ -5,7 +5,7 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete _model;
+	delete model_;
 }
 
 void GameScene::Initialize() {
@@ -15,7 +15,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	textureHandle = TextureManager::Load("mario.png");
-	_model = Model::Create();
+	model_ = Model::Create();
 }
 
 void GameScene::Update() {}
