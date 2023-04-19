@@ -50,4 +50,6 @@ private: // メンバ変数
 	/// </summary>
 	uint32_t textureHandle = 0;
 	Model* model_ = 0;
+
+	ViewProjection viewProjection_;
 };

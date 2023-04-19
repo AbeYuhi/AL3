@@ -16,6 +16,8 @@ void GameScene::Initialize() {
 
 	textureHandle = TextureManager::Load("mario.png");
 	model_ = Model::Create();
+
+	viewProjection_.Initialize();
 }
 
 void GameScene::Update() {}
