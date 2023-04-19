@@ -19,7 +19,7 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 
 	player_ = new Player();
-	player_->Initialize();
+	player_->Initialize(model_, textureHandle);
 
 	viewProjection_.Initialize();
 }
@@ -57,7 +57,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw();
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

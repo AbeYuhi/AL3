@@ -1,6 +1,8 @@
 #pragma once
 #include "WorldTransform.h"
+#include "ViewProjection.h"
 #include "Model.h"
+
 
 /// <summary>
 /// 自キャラ
@@ -26,7 +28,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(ViewProjection viewProjection);
 
 private:
 	//ワールド変換データ
