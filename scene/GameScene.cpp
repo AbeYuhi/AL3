@@ -12,7 +12,6 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle = TextureManager::Load("");
 }
 
 void GameScene::Update() {}
