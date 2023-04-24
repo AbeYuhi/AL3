@@ -58,5 +58,5 @@ private: // メンバ変数
 
 	ViewProjection viewProjection_;
 
-	DebugCamera debugCamera_;
+	DebugCamera* debugCamera_;
 };
