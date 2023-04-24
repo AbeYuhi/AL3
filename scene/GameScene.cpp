@@ -23,7 +23,8 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-
+	//デバックカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
 }
 
 void GameScene::Update() {
