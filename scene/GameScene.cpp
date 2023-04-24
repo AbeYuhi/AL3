@@ -7,6 +7,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -28,6 +29,9 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	//デバッグカメラの更新
+	debugCamera_->Update();
+
 	player_->Update();
 }
 
