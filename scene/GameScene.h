@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugCamera.h"
 #include "Player.h"
 
 /// <summary>
@@ -56,4 +57,6 @@ private: // メンバ変数
 	Player* player_ = 0;
 
 	ViewProjection viewProjection_;
+
+	DebugCamera debugCamera_;
 };
