@@ -1,7 +1,13 @@
 #pragma once
+#include <algorithm>
+#include <iostream>
+#include <list>
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
+#include "Input.h"
+#include "ImGuiManager.h"
+#include "PlayerBullet.h"
 
 
 /// <summary>
@@ -30,11 +36,27 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	/// <summary>
+	/// 回転
+	/// </summary>
+	void Rotate();
+
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
+
 private:
+
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル	
 	uint32_t textureHandle_ = 0u;
+	//キーボード入力
+	Input* input_ = nullptr;
+
+	//玉
+	std::list<PlayerBullet*> bullets_;
 };

@@ -17,7 +17,7 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle = TextureManager::Load("mario.png");
+	textureHandle = TextureManager::Load("Player.png");
 	model_ = Model::Create();
 
 	player_ = new Player();
@@ -36,7 +36,33 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	//デバッグカメラの更新
-	debugCamera_->Update();
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_0)) {
+		if (isDebugCameraActive_) {
+			isDebugCameraActive_ = false;
+		}
+		else {
+			isDebugCameraActive_ = true;
+		}
+	}
+#endif // _DEBUG
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		//ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	}
+	else {
+		//ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
+
+	ImGui::Begin("DebugCamera");
+	ImGui::Text("True(1) or False(0), %d", isDebugCameraActive_);
+	ImGui::End();
+
 
 	player_->Update();
 }
@@ -70,7 +96,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(debugCamera_->GetViewProjection());
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
