@@ -334,3 +334,12 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 
 	return Multiply(scaleMatrix, Multiply(rotateXYZMatrix, translateMatrix));
 }
+
+Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix) {
+	Vector3 result = { 
+		vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0],
+		vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
+		vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
+
+	return result;
+}

@@ -8,6 +8,14 @@ Vector3 operator+=(Vector3& num1, const Vector3& num2) {
 	return num1;
 }
 
+Vector3 operator-=(Vector3& num1, const Vector3& num2) {
+	num1.x = num1.x - num2.x;
+	num1.y = num1.y - num2.y;
+	num1.z = num1.z - num2.z;
+
+	return num1;
+}
+
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 v3 = { 0, 0, 0 };
 

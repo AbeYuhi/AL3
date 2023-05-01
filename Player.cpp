@@ -32,6 +32,23 @@ void Player::Update() {
 	//キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
 
+
+	//攻撃処理
+	Attack();
+
+	//弾更新
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
+	//デスフラグのたった弾の削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	//旋回処理
 	Rotate();
 
@@ -62,13 +79,6 @@ void Player::Update() {
 	worldTransform_.translation_.x = std::clamp(static_cast<float>(worldTransform_.translation_.x), static_cast<float>(kMoveLimitX * -1), static_cast<float>(kMoveLimitX));
 	worldTransform_.translation_.y = std::clamp(static_cast<float>(worldTransform_.translation_.y), static_cast<float>(kMoveLimitY * -1), static_cast<float>(kMoveLimitY));
 
-	//攻撃処理
-	Attack();
-
-	//弾更新
-	for(PlayerBullet* bullet : bullets_){
-		bullet->Update();
-	}
 
 	worldTransform_.UpdateMatrix();
 
@@ -104,9 +114,15 @@ void Player::Rotate() {
 void Player::Attack() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 
+		//弾の速度
+		const Vector3 kbulletSpeed(0, 0, 1.0f);
+
+		//速度ベクトルを自機の向きにあわせる
+		Vector3 velocity = TransformNormal(kbulletSpeed, worldTransform_.matWorld_);
+
 		//弾を生成し初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		//弾を登録する
 		bullets_.push_back(newBullet);
