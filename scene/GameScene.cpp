@@ -8,6 +8,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete enemy_;
 	delete debugCamera_;
 }
 
@@ -18,10 +19,14 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	textureHandle = TextureManager::Load("Player.png");
+	enemyTexture = TextureManager::Load("Slime.png");
 	model_ = Model::Create();
 
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle);
+
+	enemy_ = new Enemy();
+	enemy_->Initialize(model_, enemyTexture);
 
 	viewProjection_.Initialize();
 
@@ -65,6 +70,10 @@ void GameScene::Update() {
 
 
 	player_->Update();
+
+	if (enemy_) {
+		enemy_->Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -97,6 +106,10 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+
+	if (enemy_) {
+		enemy_->Draw(viewProjection_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

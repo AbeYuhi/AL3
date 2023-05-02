@@ -52,11 +52,23 @@
     <Filter Include="ソース ファイル\2d">
       <UniqueIdentifier>{814a0f6d-f847-4c45-856d-4688fa4c9e6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Player">
+    <Filter Include="ソース ファイル\Entity">
+      <UniqueIdentifier>{27b30b18-5c24-426a-9adc-5d1bb6ca801c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Entity\Player">
       <UniqueIdentifier>{5d810e23-3c8a-47a6-81ad-05d8bfb46171}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Player">
+    <Filter Include="ソース ファイル\Entity\Enemy">
+      <UniqueIdentifier>{cea84ab2-3525-4bb5-9f65-1ba2fdc06b81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity">
+      <UniqueIdentifier>{852431ea-d1e2-4ee0-8ae7-116bc7d162cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity\Player">
       <UniqueIdentifier>{452ca1d0-8ba7-4b38-9f51-eaeec6fd23f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity\Enemy">
+      <UniqueIdentifier>{3274fa5f-1c60-4b48-86e6-e0216e59b365}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,7 +88,7 @@
       <Filter>ソース ファイル\2d</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル\Player</Filter>
+      <Filter>ソース ファイル\Entity\Player</Filter>
     </ClCompile>
     <ClCompile Include="Matrix4x4.cpp">
       <Filter>ソース ファイル\math</Filter>
@@ -85,10 +97,13 @@
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
     <ClCompile Include="PlayerBullet.cpp">
-      <Filter>ソース ファイル\Player</Filter>
+      <Filter>ソース ファイル\Entity\Player</Filter>
     </ClCompile>
     <ClCompile Include="WorldTransformEx.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\Entity\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,10 +192,13 @@
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル\Player</Filter>
+      <Filter>ヘッダー ファイル\Entity\Player</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBullet.h">
-      <Filter>ヘッダー ファイル\Player</Filter>
+      <Filter>ヘッダー ファイル\Entity\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
