@@ -52,6 +52,8 @@ private:
 	//テクスチャハンドル	
 	uint32_t textureHandle_ = 0u;
 
-	//フェーズ
-	Phase phase_ = Phase::Approach;
+	//メンバ変数ポインタ
+	static void (Enemy::*spPhaseTable[])();
+	size_t inPhase = 0;
+
 };

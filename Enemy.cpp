@@ -1,6 +1,11 @@
 #include "Enemy.h"
 
 
+void (Enemy::* Enemy::spPhaseTable[])() = {
+	&Enemy::PhaseApproach,
+	&Enemy::PhaseLeave
+};
+
 Enemy::Enemy()
 {
 
@@ -20,21 +25,15 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
+	//現在のフェーズ
+	inPhase = 0;
+
 }
 
 void Enemy::Update() {
 
-	switch (phase_)
-	{
-	case Enemy::Phase::Approach:
-		PhaseApproach();
-		break;
-	case Enemy::Phase::Leave:
-		PhaseLeave();
-		break;
-	default:
-		break;
-	}
+	(this->*spPhaseTable[inPhase])();
+
 	worldTransform_.UpdateMatrix();
 }
 
@@ -47,7 +46,7 @@ void Enemy::PhaseApproach() {
 	worldTransform_.translation_ += {0, 0, -0.2f };
 
 	if (worldTransform_.translation_.z <= -10) {
-		phase_ = Phase::Leave;
+		inPhase = 1;
 	}
 }
 
@@ -55,6 +54,6 @@ void Enemy::PhaseLeave() {
 	worldTransform_.translation_ += {0, 0, 0.2f };
 
 	if (worldTransform_.translation_.z >= 10) {
-		phase_ = Phase::Approach;
+		inPhase = 0;
 	}
 }
