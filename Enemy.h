@@ -15,6 +15,14 @@ public:
 	~Enemy();
 
 	/// <summary>
+	/// 行動パターン
+	/// </summary>
+	enum class Phase {
+		Approach,	//接近する
+		Leave,		//離脱する
+	};
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
@@ -33,10 +41,17 @@ public:
 
 private:
 
+	void PhaseApproach();
+
+	void PhaseLeave();
+
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル	
 	uint32_t textureHandle_ = 0u;
+
+	//フェーズ
+	Phase phase_ = Phase::Approach;
 };
