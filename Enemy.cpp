@@ -1,10 +1,48 @@
 #include "Enemy.h"
 
+//行動パターン
+PhaseState::PhaseState()
+{
+}
 
-void (Enemy::* Enemy::spPhaseTable[])() = {
-	&Enemy::PhaseApproach,
-	&Enemy::PhaseLeave
-};
+PhaseState::~PhaseState()
+{	
+}
+
+//向かってくる
+PhaseApproach::PhaseApproach()
+{
+}
+
+PhaseApproach::~PhaseApproach()
+{
+}
+
+void PhaseApproach::Update(Enemy* pEnemy) {
+
+	pEnemy->Move({ 0, 0, -0.1f });
+
+	if (pEnemy->GetPosition().z <= -10) {
+		pEnemy->ChangeState(new PhaseLeave());
+	}
+}
+
+//逃走
+PhaseLeave::PhaseLeave()
+{
+}
+
+PhaseLeave::~PhaseLeave()
+{
+}
+void PhaseLeave::Update(Enemy* pEnemy) {
+
+	pEnemy->Move({ 0, 0, 0.1f });
+
+	if (pEnemy->GetPosition().z >= 10) {
+		pEnemy->ChangeState(new PhaseApproach());
+	}
+}
 
 Enemy::Enemy()
 {
@@ -13,9 +51,8 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-
+	delete state_;
 }
-
 
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
@@ -25,14 +62,11 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	//現在のフェーズ
-	inPhase = 0;
-
+	state_ = new PhaseApproach();
 }
 
 void Enemy::Update() {
-
-	(this->*spPhaseTable[inPhase])();
+	state_->Update(this);
 
 	worldTransform_.UpdateMatrix();
 }
@@ -42,18 +76,11 @@ void Enemy::Draw(ViewProjection viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }
 
-void Enemy::PhaseApproach() {
-	worldTransform_.translation_ += {0, 0, -0.2f };
-
-	if (worldTransform_.translation_.z <= -10) {
-		inPhase = 1;
-	}
+void Enemy::ChangeState(PhaseState* newState) {
+	delete state_;
+	state_ = newState;
 }
 
-void Enemy::PhaseLeave() {
-	worldTransform_.translation_ += {0, 0, 0.2f };
-
-	if (worldTransform_.translation_.z >= 10) {
-		inPhase = 0;
-	}
+void Enemy::Move(Vector3 speed) {
+	worldTransform_.translation_ += speed;
 }

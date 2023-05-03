@@ -8,6 +8,44 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 
+class Enemy;
+
+class PhaseState
+{
+public:
+	PhaseState();
+	virtual ~PhaseState();
+
+	virtual void Update(Enemy* pEnemy) = 0;
+
+private:
+	Enemy* enemy_;
+};
+
+class PhaseApproach : public PhaseState
+{
+public:
+	PhaseApproach();
+	~PhaseApproach();
+
+	void Update(Enemy* pEnemy);
+
+private:
+
+};
+
+class PhaseLeave : public PhaseState
+{
+public:
+	PhaseLeave();
+	~PhaseLeave();
+
+	void Update(Enemy* pEnemy);
+
+private:
+
+};
+
 class Enemy
 {
 public:
@@ -39,11 +77,14 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	void ChangeState(PhaseState* newState);
+
+	void Move(Vector3 speed);
+
+	//ゲッターセッター
+	inline Vector3 GetPosition() { return worldTransform_.translation_; }
+
 private:
-
-	void PhaseApproach();
-
-	void PhaseLeave();
 
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -52,8 +93,5 @@ private:
 	//テクスチャハンドル	
 	uint32_t textureHandle_ = 0u;
 
-	//メンバ変数ポインタ
-	static void (Enemy::*spPhaseTable[])();
-	size_t inPhase = 0;
-
+	PhaseState* state_;
 };
