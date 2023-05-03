@@ -19,11 +19,21 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	Fire();
+	worldTransform_.translation_.x = 10;
+
+	PhaseApproachInitialize();
 
 }
 
 void Enemy::Update() {
+
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet> &bullet) {
+		if (bullet->IsDead()) {
+			return true;
+		}
+		bullet->Update();
+		return false;
+	});
 
 	switch (phase_)
 	{
@@ -42,12 +52,18 @@ void Enemy::Update() {
 void Enemy::Draw(ViewProjection viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	for (auto& bullet : bullets_) {
+		if (bullet) {
+			bullet->Draw(viewProjection);
+		}
+	}
 }
 
 void Enemy::Fire() {
 
 	//弾の速度
-	const Vector3 kbulletSpeed(0, 0, 1.0f);
+	const Vector3 kbulletSpeed(0, 0, -0.1f);
 
 	//速度ベクトルを自機の向きにあわせる
 	Vector3 velocity = TransformNormal(kbulletSpeed, worldTransform_.matWorld_);
@@ -59,11 +75,23 @@ void Enemy::Fire() {
 	////弾を登録する
 	//bullets_.push_back(newBullet);
 
-	bullets_->Initialize(model_, worldTransform_.translation_, velocity);
+	std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	bullets_.push_back(std::move(newBullet));
 
 }
 
+void Enemy::PhaseApproachInitialize() {
+	bulletCooldown = kFireIntervel;
+}
+
 void Enemy::PhaseApproach() {
+	if (--bulletCooldown <= 0) {
+		bulletCooldown = kFireIntervel;
+		Fire();
+	}
+
 	worldTransform_.translation_ += {0, 0, -0.2f };
 
 	if (worldTransform_.translation_.z <= -10) {
@@ -75,6 +103,7 @@ void Enemy::PhaseLeave() {
 	worldTransform_.translation_ += {0, 0, 0.2f };
 
 	if (worldTransform_.translation_.z >= 10) {
+		PhaseApproachInitialize();
 		phase_ = Phase::Approach;
 	}
 }

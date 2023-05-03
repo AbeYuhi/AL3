@@ -10,6 +10,7 @@
 #include "ImGuiManager.h"
 #include "EnemyBullet.h"
 
+
 class Enemy
 {
 public:
@@ -43,6 +44,10 @@ public:
 
 	void Fire();
 
+	void PhaseApproachInitialize();
+
+	static const int kFireIntervel = 60;
+
 private:
 
 	void PhaseApproach();
@@ -59,5 +64,6 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approach;
 
-	std::unique_ptr<EnemyBullet> bullets_;
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	int32_t bulletCooldown = 0u;
 };
