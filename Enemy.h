@@ -2,11 +2,13 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <memory>
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "EnemyBullet.h"
 
 class Enemy
 {
@@ -39,6 +41,8 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	void Fire();
+
 private:
 
 	void PhaseApproach();
@@ -54,4 +58,6 @@ private:
 
 	//フェーズ
 	Phase phase_ = Phase::Approach;
+
+	std::unique_ptr<EnemyBullet> bullets_;
 };

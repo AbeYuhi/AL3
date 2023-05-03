@@ -8,7 +8,6 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-
 }
 
 
@@ -19,6 +18,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	this->textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+
+	Fire();
 
 }
 
@@ -41,6 +42,25 @@ void Enemy::Update() {
 void Enemy::Draw(ViewProjection viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+}
+
+void Enemy::Fire() {
+
+	//弾の速度
+	const Vector3 kbulletSpeed(0, 0, 1.0f);
+
+	//速度ベクトルを自機の向きにあわせる
+	Vector3 velocity = TransformNormal(kbulletSpeed, worldTransform_.matWorld_);
+
+	//弾を生成し初期化
+	//std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
+	//newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	////弾を登録する
+	//bullets_.push_back(newBullet);
+
+	bullets_->Initialize(model_, worldTransform_.translation_, velocity);
+
 }
 
 void Enemy::PhaseApproach() {

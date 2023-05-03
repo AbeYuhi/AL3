@@ -13,8 +13,6 @@ public:
 	EnemyBullet();
 	~EnemyBullet();
 
-
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
