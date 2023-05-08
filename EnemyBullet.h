@@ -31,9 +31,7 @@ public:
 	//ゲッターセッター
 	inline bool IsDead() const { return isDead_; }
 
-
 private:
-
 
 	//ワールド変換データ
 	WorldTransform worldTransform_;

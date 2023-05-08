@@ -9,6 +9,7 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 
 class Enemy
@@ -44,6 +45,8 @@ public:
 
 	void Fire();
 
+	void FireRiset();
+
 	void PhaseApproachInitialize();
 
 	static const int kFireIntervel = 60;
@@ -65,5 +68,8 @@ private:
 	Phase phase_ = Phase::Approach;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-	int32_t bulletCooldown = 0u;
+	int32_t bulletCooldown = 0;
+
+	//時限発動のリスト
+	std::list<std::unique_ptr<TimedCall>> timedCalls_;
 };

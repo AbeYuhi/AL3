@@ -108,6 +108,9 @@
     <ClCompile Include="EnemyBullet.cpp">
       <Filter>ソース ファイル\Entity\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="TimedCall.cpp">
+      <Filter>ソース ファイル\Entity\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -204,6 +207,9 @@
       <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="EnemyBullet.h">
+      <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="TimedCall.h">
       <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

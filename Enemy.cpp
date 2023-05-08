@@ -27,13 +27,26 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 void Enemy::Update() {
 
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet> &bullet) {
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
 		if (bullet->IsDead()) {
 			return true;
 		}
-		bullet->Update();
 		return false;
 	});
+	for (auto &bullet : bullets_) {
+		bullet->Update();
+	}
+	
+
+	timedCalls_.remove_if([](std::unique_ptr<TimedCall>& timedCall) {
+		if (timedCall->IsFinished()) {
+			return true;
+		}
+		return false;
+	});
+	for (auto& timedCall : timedCalls_) {
+		timedCall->Update();
+	}
 
 	switch (phase_)
 	{
@@ -82,19 +95,31 @@ void Enemy::Fire() {
 
 }
 
+void Enemy::FireRiset() {
+	Fire();
+
+	std::unique_ptr<TimedCall> newTimedCall(new TimedCall(std::bind(&Enemy::FireRiset, this), 60));
+	timedCalls_.push_back(std::move(newTimedCall));
+}
+
 void Enemy::PhaseApproachInitialize() {
+	FireRiset();
+
 	bulletCooldown = kFireIntervel;
 }
 
 void Enemy::PhaseApproach() {
-	if (--bulletCooldown <= 0) {
-		bulletCooldown = kFireIntervel;
-		Fire();
-	}
 
 	worldTransform_.translation_ += {0, 0, -0.2f };
 
 	if (worldTransform_.translation_.z <= -10) {
+
+		timedCalls_.remove_if([](std::unique_ptr<TimedCall>& timedCall) {
+			if (timedCall) {
+				return true;
+			}
+			return false;
+		});
 		phase_ = Phase::Leave;
 	}
 }
