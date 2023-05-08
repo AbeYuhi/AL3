@@ -12,7 +12,10 @@ struct Vector3 final {
 
 //算術演算子のオーバーロード
 Vector3 operator+=(Vector3& num1, const Vector3& num2);
-
+Vector3 operator-=(Vector3& num1, const Vector3& num2);
+Vector3 operator-(Vector3& num1, const Vector3& num2);
+Vector3 operator*=(Vector3& num1, const float num2);
+Vector3 operator*(Vector3& num1, const float num2);
 
 //関数
 

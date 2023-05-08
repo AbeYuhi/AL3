@@ -27,6 +27,7 @@ void GameScene::Initialize() {
 
 	enemy_ = new Enemy();
 	enemy_->Initialize(model_, enemyTexture);
+	enemy_->SetPlayer(player_);
 
 	viewProjection_.Initialize();
 

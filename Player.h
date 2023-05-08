@@ -46,6 +46,8 @@ public:
 	/// </summary>
 	void Attack();
 
+	inline Vector3 GetPlayerPosition() { return worldTransform_.translation_; }
+
 private:
 
 	//ワールド変換データ

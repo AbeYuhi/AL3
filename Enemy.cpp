@@ -1,5 +1,5 @@
 #include "Enemy.h"
-
+#include "Player.h"
 
 Enemy::Enemy()
 {
@@ -61,19 +61,19 @@ void Enemy::Draw(ViewProjection viewProjection) {
 }
 
 void Enemy::Fire() {
+	assert(player_);
 
 	//弾の速度
-	const Vector3 kbulletSpeed(0, 0, -0.1f);
+	const float kbulletSpeed = 1.0f;
 
-	//速度ベクトルを自機の向きにあわせる
-	Vector3 velocity = TransformNormal(kbulletSpeed, worldTransform_.matWorld_);
+	Vector3 playerPos = player_->GetPlayerPosition();
+	Vector3 enemyPos = GetEnemyPosition();
+	
+	Vector3 differencialVector = playerPos - enemyPos;
 
-	//弾を生成し初期化
-	//std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
-	//newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	Vector3 normalizeVector = Normalize(differencialVector);
 
-	////弾を登録する
-	//bullets_.push_back(newBullet);
+	Vector3 velocity = normalizeVector * kbulletSpeed;
 
 	std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);

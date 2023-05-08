@@ -10,6 +10,7 @@
 #include "ImGuiManager.h"
 #include "EnemyBullet.h"
 
+class Player;
 
 class Enemy
 {
@@ -48,6 +49,9 @@ public:
 
 	static const int kFireIntervel = 60;
 
+	inline void SetPlayer(Player* player) { player_ = std::move(static_cast<std::unique_ptr<Player>>(player)); }
+	inline Vector3 GetEnemyPosition() { return worldTransform_.translation_; }
+
 private:
 
 	void PhaseApproach();
@@ -66,4 +70,6 @@ private:
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	int32_t bulletCooldown = 0u;
+
+	std::unique_ptr<Player> player_ = nullptr;
 };
