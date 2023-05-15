@@ -1,11 +1,16 @@
 #pragma once
 #include <algorithm>
 #include <iostream>
+#include <list>
+#include <memory>
+#include "Vector3.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+
+class Player;
 
 class EnemyBullet
 {
@@ -30,6 +35,7 @@ public:
 
 	//ゲッターセッター
 	inline bool IsDead() const { return isDead_; }
+	inline void SetPlayer(Player* player) { player_ = player; }
 
 
 private:
@@ -51,5 +57,8 @@ private:
 	//デスタイマー
 	int32_t deathTimer_ = kLifeTime;
 	bool isDead_ = false;
+	float t = 0;
+
+	Player* player_ = nullptr;
 
 };

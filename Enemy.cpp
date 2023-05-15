@@ -19,7 +19,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_.x = 10;
+	worldTransform_.translation_.z = 20;
 
 	PhaseApproachInitialize();
 
@@ -31,9 +31,13 @@ void Enemy::Update() {
 		if (bullet->IsDead()) {
 			return true;
 		}
-		bullet->Update();
 		return false;
 	});
+	for (auto& bullet : bullets_) {
+		if (bullet) {
+			bullet->Update();
+		}
+	}
 
 	switch (phase_)
 	{
@@ -63,23 +67,11 @@ void Enemy::Draw(ViewProjection viewProjection) {
 void Enemy::Fire() {
 	assert(player_);
 
-	//弾の速度
-	const float kbulletSpeed = 1.0f;
-
-	Vector3 playerPos = player_->GetPlayerPosition();
-	Vector3 enemyPos = GetEnemyPosition();
-	
-	Vector3 differencialVector = playerPos - enemyPos;
-
-	Vector3 normalizeVector = Normalize(differencialVector);
-
-	Vector3 velocity = normalizeVector * kbulletSpeed;
-
 	std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(model_, GetEnemyPosition(), {0, 0, -1});
+	newBullet->SetPlayer(player_);
 
 	bullets_.push_back(std::move(newBullet));
-
 }
 
 void Enemy::PhaseApproachInitialize() {
@@ -92,11 +84,7 @@ void Enemy::PhaseApproach() {
 		Fire();
 	}
 
-	worldTransform_.translation_ += {0, 0, -0.2f };
-
-	if (worldTransform_.translation_.z <= -10) {
-		phase_ = Phase::Leave;
-	}
+	//worldTransform_.translation_ += {0, 0, -0.2f };
 }
 
 void Enemy::PhaseLeave() {

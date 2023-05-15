@@ -3,6 +3,7 @@
 #include <iostream>
 #include <list>
 #include <memory>
+#include <cmath>
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
@@ -49,7 +50,7 @@ public:
 
 	static const int kFireIntervel = 60;
 
-	inline void SetPlayer(Player* player) { player_ = std::move(static_cast<std::unique_ptr<Player>>(player)); }
+	inline void SetPlayer(Player* player) { player_ = player; }
 	inline Vector3 GetEnemyPosition() { return worldTransform_.translation_; }
 
 private:
@@ -71,5 +72,5 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	int32_t bulletCooldown = 0u;
 
-	std::unique_ptr<Player> player_ = nullptr;
+	Player* player_ = nullptr;
 };
