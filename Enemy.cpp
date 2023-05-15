@@ -68,7 +68,7 @@ void Enemy::Fire() {
 	assert(player_);
 
 	std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
-	newBullet->Initialize(model_, GetEnemyPosition(), {0, 0, -1});
+	newBullet->Initialize(model_, GetEnemyPosition(), {0.1f, 0.1f, -1});
 	newBullet->SetPlayer(player_);
 
 	bullets_.push_back(std::move(newBullet));
