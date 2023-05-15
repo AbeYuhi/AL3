@@ -8,6 +8,9 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
 }
 
 
@@ -27,7 +30,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 void Enemy::Update() {
 
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet> &bullet) {
+	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->IsDead()) {
 			return true;
 		}
@@ -75,10 +78,10 @@ void Enemy::Fire() {
 
 	Vector3 velocity = normalizeVector * kbulletSpeed;
 
-	std::unique_ptr<EnemyBullet> newBullet(new EnemyBullet());
+	EnemyBullet* newBullet(new EnemyBullet());
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
-	bullets_.push_back(std::move(newBullet));
+	bullets_.push_back(newBullet);
 
 }
 
@@ -106,4 +109,12 @@ void Enemy::PhaseLeave() {
 		PhaseApproachInitialize();
 		phase_ = Phase::Approach;
 	}
+}
+
+void Enemy::OnCollision() {
+
+}
+
+const std::list<EnemyBullet*> Enemy::GetBullets() {
+	return bullets_;
 }

@@ -27,6 +27,8 @@ void GameScene::Initialize() {
 
 	enemy_ = new Enemy();
 	enemy_->Initialize(model_, enemyTexture);
+
+	player_->SetEnemy(enemy_);
 	enemy_->SetPlayer(player_);
 
 	viewProjection_.Initialize();
@@ -75,6 +77,9 @@ void GameScene::Update() {
 	if (enemy_) {
 		enemy_->Update();
 	}
+
+	CheckAllCollisions();
+
 }
 
 void GameScene::Draw() {
@@ -129,5 +134,70 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+
+	//自弾リストの取得
+	std::list<PlayerBullet*> playerBullets = player_->GetBullets();
+	//敵弾リストの取得
+	std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
+
+#pragma region 自キャラと敵弾の当たり判定
+	posA = player_->GetPlayerPosition();
+
+	for (auto bullet : enemyBullets) {
+		posB = bullet->GetPos();
+
+		float length = Length(posA, posB);
+
+		if (length <= player_->kSize + enemy_->kSize) {
+			//自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision();
+			//敵弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+
+	}
+
+#pragma endregion
+
+#pragma region 敵キャラと自弾の当たり判定
+	posA = enemy_->GetEnemyPosition();
+
+	for (auto bullet : playerBullets) {
+		posB = bullet->GetPos();
+
+		float length = Length(posA, posB);
+
+		if (length <= player_->kSize + enemy_->kSize) {
+			//敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			//自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+
+	}
+#pragma endregion
+
+#pragma region 自弾と敵弾の当たり判定
+
+	for(auto pBullet : playerBullets){
+		posA = pBullet->GetPos();
+		for (auto eBullet : enemyBullets) {
+			posB = eBullet->GetPos();
+
+			float length = Length(posA, posB);
+
+			if (length <= player_->kSize + enemy_->kSize) {
+				//自弾の衝突時コールバックを呼び出す
+				pBullet->OnCollision();
+				//敵弾の衝突時コールバックを呼び出す
+				eBullet->OnCollision();
+			}
+		}
+	}
 #pragma endregion
 }

@@ -47,10 +47,18 @@ public:
 
 	void PhaseApproachInitialize();
 
+	/// <summary>
+	/// 衝突したときに呼び出される関数
+	/// </summary>
+	void OnCollision();
+
 	static const int kFireIntervel = 60;
 
-	inline void SetPlayer(Player* player) { player_ = std::move(static_cast<std::unique_ptr<Player>>(player)); }
+	//ゲッターセッター
+	inline void SetPlayer(Player* player) { player_ = player; }
 	inline Vector3 GetEnemyPosition() { return worldTransform_.translation_; }
+	const std::list<EnemyBullet*> GetBullets();
+	static const int kSize = 2;
 
 private:
 
@@ -68,8 +76,9 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approach;
 
-	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	std::list<EnemyBullet*> bullets_;
 	int32_t bulletCooldown = 0u;
 
-	std::unique_ptr<Player> player_ = nullptr;
+	//自キャラのクラスポインタ
+	Player* player_ = nullptr;
 };

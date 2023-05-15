@@ -28,9 +28,15 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 衝突したときに呼び出される関数
+	/// </summary>
+	void OnCollision();
+
 	//ゲッターセッター
 	inline bool IsDead() const { return isDead_; }
-
+	inline Vector3 GetPos() { return worldTransform_.translation_; }
+	static const int kSize = 2;
 
 private:
 

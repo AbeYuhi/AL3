@@ -9,6 +9,7 @@
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
 
+class Enemy;
 
 /// <summary>
 /// 自キャラ
@@ -46,7 +47,16 @@ public:
 	/// </summary>
 	void Attack();
 
+	/// <summary>
+	/// 衝突したときに呼び出される関数
+	/// </summary>
+	void OnCollision();
+
+	//ゲッターセッター
 	inline Vector3 GetPlayerPosition() { return worldTransform_.translation_; }
+	inline void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	const std::list<PlayerBullet*> GetBullets();
+	static const int kSize = 2;
 
 private:
 
@@ -61,4 +71,6 @@ private:
 
 	//玉
 	std::list<PlayerBullet*> bullets_;
+
+	Enemy* enemy_ = nullptr;
 };
