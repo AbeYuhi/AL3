@@ -7,9 +7,9 @@ public:
 	Collider();
 	virtual ~Collider();
 
-	virtual void OnCollision();
+	virtual void OnCollision() = 0;
 
-	virtual Vector3 GetWorldPosition();
+	virtual Vector3 GetWorldPosition() = 0;
 
 	//ゲッターセッター
 	inline float GetRadius() { return radius_; }
