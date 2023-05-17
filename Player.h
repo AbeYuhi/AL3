@@ -8,13 +8,14 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
+#include "Collider.h"
 
 class Enemy;
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player
+class Player : public Collider
 {
 public:
 	Player();

@@ -6,8 +6,9 @@
 #include "Model.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "Collider.h"
 
-class EnemyBullet
+class EnemyBullet : public Collider
 {
 public:
 	EnemyBullet();

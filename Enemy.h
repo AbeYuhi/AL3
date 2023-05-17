@@ -9,10 +9,11 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "EnemyBullet.h"
+#include "Collider.h"
 
 class Player;
 
-class Enemy
+class Enemy : public Collider
 {
 public:
 	Enemy();

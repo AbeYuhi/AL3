@@ -7,8 +7,9 @@
 #include "Model.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "Collider.h"
 
-class PlayerBullet
+class PlayerBullet : public Collider
 {
 public:
 	PlayerBullet();
