@@ -17,5 +17,5 @@ public:
 
 private:
 	//半径
-	float radius_ = 2;
+	float radius_ = 2; 
 };
