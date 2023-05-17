@@ -5,7 +5,7 @@ class Collider
 {
 public:
 	Collider();
-	~Collider();
+	virtual ~Collider();
 
 	virtual void OnCollision();
 
