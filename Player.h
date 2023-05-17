@@ -54,10 +54,9 @@ public:
 	void OnCollision();
 
 	//ゲッターセッター
-	inline Vector3 GetPlayerPosition() { return worldTransform_.translation_; }
+	inline Vector3 GetWorldPosition() { return worldTransform_.translation_; }
 	inline void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 	const std::list<PlayerBullet*> GetBullets();
-	static const int kSize = 2;
 
 private:
 

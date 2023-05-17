@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -9,6 +8,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "Collider.h"
 #include "Player.h"
 #include "Enemy.h"
 
@@ -70,4 +70,6 @@ private: // メンバ変数
 	DebugCamera* debugCamera_;
 
 	bool isDebugCameraActive_ = false;
+
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 };

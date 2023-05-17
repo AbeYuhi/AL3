@@ -36,8 +36,7 @@ public:
 
 	//ゲッターセッター
 	inline bool IsDead() const { return isDead_; }
-	inline Vector3 GetPos() { return worldTransform_.translation_; }
-	static const int kSize = 2;
+	inline Vector3 GetWorldPosition() { return worldTransform_.translation_; }
 
 private:
 

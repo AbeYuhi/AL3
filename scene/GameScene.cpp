@@ -138,66 +138,41 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	Vector3 posA, posB;
-
 	//自弾リストの取得
 	std::list<PlayerBullet*> playerBullets = player_->GetBullets();
 	//敵弾リストの取得
 	std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
 
 #pragma region 自キャラと敵弾の当たり判定
-	posA = player_->GetPlayerPosition();
-
 	for (auto bullet : enemyBullets) {
-		posB = bullet->GetPos();
-
-		float length = Length(posA, posB);
-
-		if (length <= player_->kSize + enemy_->kSize) {
-			//自キャラの衝突時コールバックを呼び出す
-			player_->OnCollision();
-			//敵弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
-		}
-
+		CheckCollisionPair(player_, bullet);
 	}
 
 #pragma endregion
 
 #pragma region 敵キャラと自弾の当たり判定
-	posA = enemy_->GetEnemyPosition();
-
 	for (auto bullet : playerBullets) {
-		posB = bullet->GetPos();
-
-		float length = Length(posA, posB);
-
-		if (length <= player_->kSize + enemy_->kSize) {
-			//敵キャラの衝突時コールバックを呼び出す
-			enemy_->OnCollision();
-			//自弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
-		}
-
+		CheckCollisionPair(enemy_, bullet);
 	}
 #pragma endregion
 
 #pragma region 自弾と敵弾の当たり判定
 
 	for(auto pBullet : playerBullets){
-		posA = pBullet->GetPos();
 		for (auto eBullet : enemyBullets) {
-			posB = eBullet->GetPos();
-
-			float length = Length(posA, posB);
-
-			if (length <= player_->kSize + enemy_->kSize) {
-				//自弾の衝突時コールバックを呼び出す
-				pBullet->OnCollision();
-				//敵弾の衝突時コールバックを呼び出す
-				eBullet->OnCollision();
-			}
+			CheckCollisionPair(pBullet, eBullet);
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	Vector3 posA = colliderA->GetWorldPosition();
+	Vector3 posB = colliderB->GetWorldPosition();
+	float length = Length(posA, posB);
+	//交差判定
+	if (length <= colliderA->GetRadius() + colliderB->GetRadius()) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }

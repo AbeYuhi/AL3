@@ -57,9 +57,8 @@ public:
 
 	//ゲッターセッター
 	inline void SetPlayer(Player* player) { player_ = player; }
-	inline Vector3 GetEnemyPosition() { return worldTransform_.translation_; }
+	inline Vector3 GetWorldPosition() { return worldTransform_.translation_; }
 	const std::list<EnemyBullet*> GetBullets();
-	static const int kSize = 2;
 
 private:
 

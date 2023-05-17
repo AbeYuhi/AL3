@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 
 class Collider
 {
@@ -8,11 +9,13 @@ public:
 
 	virtual void OnCollision();
 
-	//ƒQƒbƒ^[ƒZƒbƒ^[
-	inline float GetRadius() { return radius; }
-	inline void SetRadius(float radius) { this->radius = radius; }
+	virtual Vector3 GetWorldPosition();
+
+	//ã‚²ãƒƒã‚¿ãƒ¼ã‚»ãƒƒã‚¿ãƒ¼
+	inline float GetRadius() { return radius_; }
+	inline void SetRadius(float radius) { this->radius_ = radius; }
 
 private:
-	//”¼Œa
-	float radius = 2;
+	//åŠå¾„
+	float radius_ = 2;
 };
