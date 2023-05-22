@@ -1,4 +1,6 @@
 #pragma once
+#include <concepts>
+#include <compare>
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"

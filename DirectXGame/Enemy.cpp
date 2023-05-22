@@ -26,6 +26,10 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	PhaseApproachInitialize();
 
+
+	//衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionMask(~kCollisionAttributeEnemy);
 }
 
 void Enemy::Update() {
@@ -82,7 +86,6 @@ void Enemy::Fire() {
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	bullets_.push_back(newBullet);
-
 }
 
 void Enemy::PhaseApproachInitialize() {

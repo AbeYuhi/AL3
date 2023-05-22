@@ -21,8 +21,11 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	worldTransform_.translation_ = position;
 
-
 	this->velocity_ = velocity;
+
+	//衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionMask(~kCollisionAttributeEnemy);
 }
 
 void EnemyBullet::Update() {

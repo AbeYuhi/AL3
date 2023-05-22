@@ -143,30 +143,42 @@ void GameScene::CheckAllCollisions() {
 	//敵弾リストの取得
 	std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
 
-#pragma region 自キャラと敵弾の当たり判定
-	for (auto bullet : enemyBullets) {
-		CheckCollisionPair(player_, bullet);
-	}
-
-#pragma endregion
-
-#pragma region 敵キャラと自弾の当たり判定
+	std::list<Collider*> colliders_;
+	//コライダーをリストに登録
+	colliders_.push_back(player_);
+	colliders_.push_back(enemy_);
+	//自弾すべて
 	for (auto bullet : playerBullets) {
-		CheckCollisionPair(enemy_, bullet);
+		colliders_.push_back(bullet);
 	}
-#pragma endregion
+	//敵弾すべて
+	for (auto bullet : enemyBullets) {
+		colliders_.push_back(bullet);
+	}
+	//リストのペアを総当たり
+	std::list<Collider*>::iterator itrA = colliders_.begin();
+	for (; itrA != colliders_.end(); ++itrA) {
+		auto colliderA = *itrA;
 
-#pragma region 自弾と敵弾の当たり判定
+		//イテレーターBはイテレーターAの次の要素から回す
+		std::list<Collider*>::iterator itrB = itrA;
+		itrB++;
+		for (; itrB != colliders_.end(); ++itrB) {
+			auto colliderB = *itrB;
 
-	for(auto pBullet : playerBullets){
-		for (auto eBullet : enemyBullets) {
-			CheckCollisionPair(pBullet, eBullet);
+			//ペアの当たり判定
+			CheckCollisionPair(colliderA, colliderB);
 		}
 	}
-#pragma endregion
+
 }
 
 void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+
+	if ((colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask()) == 0 || (colliderA->GetCollisionMask() & colliderB->GetCollisionAttribute()) == 0) {
+		return;
+	}
+
 	Vector3 posA = colliderA->GetWorldPosition();
 	Vector3 posB = colliderB->GetWorldPosition();
 	float length = Length(posA, posB);
