@@ -7,9 +7,7 @@ Player::Player()
 
 Player::~Player()
 {
-	for (PlayerBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	bullets_.clear();
 }
 
 

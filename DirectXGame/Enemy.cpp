@@ -8,9 +8,7 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	bullets_.clear();
 }
 
 
