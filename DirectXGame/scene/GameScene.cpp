@@ -31,6 +31,8 @@ void GameScene::Initialize() {
 	player_->SetEnemy(enemy_);
 	enemy_->SetPlayer(player_);
 
+	//ビュープロジェクションの初期化
+	viewProjection_.farZ = 1000;
 	viewProjection_.Initialize();
 
 	//デバックカメラの生成
@@ -40,6 +42,10 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_ = new Skydome();
+	skydome_->Initialize(modelSkydome_);
 }
 
 void GameScene::Update() {
@@ -69,8 +75,8 @@ void GameScene::Update() {
 
 	ImGui::Begin("DebugCamera");
 	ImGui::Text("True(1) or False(0), %d", isDebugCameraActive_);
+	ImGui::Text("%f", viewProjection_.farZ);
 	ImGui::End();
-
 
 	player_->Update();
 
@@ -95,7 +101,7 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-
+	
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -110,6 +116,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	skydome_->Draw(viewProjection_);
 
 	player_->Draw(viewProjection_);
 
