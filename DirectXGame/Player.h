@@ -53,10 +53,19 @@ public:
 	void OnCollision();
 
 	//ゲッターセッター
-	inline Vector3 GetPlayerPosition() { return worldTransform_.translation_; }
+	inline Vector3 GetWorldPosition() {
+		Vector3 worldPos;
+		worldPos.x = worldTransform_.matWorld_.m[3][0];
+		worldPos.y = worldTransform_.matWorld_.m[3][1];
+		worldPos.z = worldTransform_.matWorld_.m[3][2];
+		return worldPos;
+	}
 	inline void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 	const std::list<PlayerBullet*> GetBullets();
 	static const int kSize = 2;
+
+	//親子関係
+	inline void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
 private:
 

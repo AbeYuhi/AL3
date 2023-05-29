@@ -1,6 +1,66 @@
 #include "Matrix4x4.h"
 #include "Vector3.h"
 
+//算術演算子のオーバーロード
+Matrix4x4 operator+(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	Matrix4x4 matrix = {};
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix.m[row][colmun] = matrix1.m[row][colmun] + matrix2.m[row][colmun];
+		}
+	}
+	return matrix;
+}
+
+Matrix4x4 operator-(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	Matrix4x4 matrix = {};
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix.m[row][colmun] = matrix1.m[row][colmun] - matrix2.m[row][colmun];
+		}
+	}
+	return matrix;
+}
+Matrix4x4 operator*(const Matrix4x4& matrix1, const float num2) {
+	Matrix4x4 matrix = {};
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix.m[row][colmun] = matrix1.m[row][colmun] * num2;
+		}
+	}
+	return matrix;
+}
+Matrix4x4 operator+=(Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix1.m[row][colmun] += matrix2.m[row][colmun];
+		}
+	}
+	return matrix1;
+}
+Matrix4x4 operator-=(Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix1.m[row][colmun] -= matrix2.m[row][colmun];
+		}
+	}
+	return matrix1;
+}
+Matrix4x4 operator*=(Matrix4x4& matrix1, const float num2) {
+	for (int row = 0; row < 4; row++) {
+		for (int colmun = 0; colmun < 4; colmun++) {
+			matrix1.m[row][colmun] *= num2;
+		}
+	}
+	return matrix1;
+}
+Matrix4x4 operator*=(Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	matrix1 = Multiply(matrix1, matrix2);
+
+	return matrix1;
+}
+
+//関数
 Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2) {
 	Matrix4x4 matrix = {};
 	for (int row = 0; row < 4; row++) {
@@ -302,7 +362,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 }
 
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
-	Matrix4x4 matrix = {};
+	Matrix4x4 matrix = {0};
 
 	matrix.m[0][0] = scale.x;
 	matrix.m[1][1] = scale.y;
@@ -333,6 +393,47 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
 
 	return Multiply(scaleMatrix, Multiply(rotateXYZMatrix, translateMatrix));
+}
+
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
+	Matrix4x4 matrix = { 0 };
+
+	matrix.m[0][0] = (1.0f / aspectRatio) * (1.0f / tanf(fovY / 2.0f));
+	matrix.m[1][1] = (1.0f / tanf(fovY / 2.0f));
+	matrix.m[2][2] = farClip / (farClip - nearClip);
+	matrix.m[2][3] = 1.0f;
+	matrix.m[3][2] = (-1.0f * nearClip * farClip) / (farClip - nearClip);
+
+
+	return matrix;
+}
+
+Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
+	Matrix4x4 matrix = MakeIdentity4x4();
+
+	matrix.m[0][0] = 2.0f / (right - left);
+	matrix.m[1][1] = 2.0f / (top - bottom);
+	matrix.m[2][2] = 1.0f / (farClip - nearClip);
+
+	matrix.m[3][0] = (left + right) / (left - right);
+	matrix.m[3][1] = (top + bottom) / (top - bottom);
+	matrix.m[3][2] = (nearClip) / (nearClip - farClip);
+
+	return matrix;
+}
+
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
+	Matrix4x4 matrix = MakeIdentity4x4();
+
+	matrix.m[0][0] = width / 2.0f;
+	matrix.m[1][1] = -1 * (height / 2.0f);
+	matrix.m[2][2] = maxDepth - minDepth;
+
+	matrix.m[3][0] = left + width / 2.0f;
+	matrix.m[3][1] = top + height / 2.0f;
+	matrix.m[3][2] = minDepth;
+
+	return matrix;
 }
 
 Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix) {

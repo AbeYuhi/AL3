@@ -69,8 +69,8 @@ void Enemy::Fire() {
 	//弾の速度
 	const float kbulletSpeed = 1.0f;
 
-	Vector3 playerPos = player_->GetPlayerPosition();
-	Vector3 enemyPos = GetEnemyPosition();
+	Vector3 playerPos = player_->GetWorldPosition();
+	Vector3 enemyPos = GetWorldPosition();
 	
 	Vector3 differencialVector = playerPos - enemyPos;
 

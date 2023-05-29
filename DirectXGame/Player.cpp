@@ -20,6 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	this->textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+	worldTransform_.translation_.z = 20;
 
 	input_ = Input::GetInstance();
 }
@@ -74,7 +75,6 @@ void Player::Update() {
 	//移動限界座標
 	const int kMoveLimitX = 30;
 	const int kMoveLimitY = 15;
-	const int kMoveLimitZ = 10;
 
 	worldTransform_.translation_.x = std::clamp(static_cast<float>(worldTransform_.translation_.x), static_cast<float>(kMoveLimitX * -1), static_cast<float>(kMoveLimitX));
 	worldTransform_.translation_.y = std::clamp(static_cast<float>(worldTransform_.translation_.y), static_cast<float>(kMoveLimitY * -1), static_cast<float>(kMoveLimitY));
@@ -83,9 +83,8 @@ void Player::Update() {
 	worldTransform_.UpdateMatrix();
 
 	ImGui::Begin("PlayerState");
-	ImGui::SliderFloat("PosX", &worldTransform_.translation_.x, -1 * kMoveLimitX, kMoveLimitX);
-	ImGui::SliderFloat("PosY", &worldTransform_.translation_.y, -1 * kMoveLimitY, kMoveLimitY);
-	ImGui::SliderFloat("PosZ", &worldTransform_.translation_.z, -1 * kMoveLimitZ, kMoveLimitZ);
+	float* pos[3] = { &worldTransform_.matWorld_.m[3][0], &worldTransform_.matWorld_.m[3][1], &worldTransform_.matWorld_.m[3][2] };
+	ImGui::SliderFloat3("Position", *pos, -50, 50);
 	ImGui::End();
 }
 
@@ -103,10 +102,10 @@ void Player::Rotate() {
 
 	//押した方向で移動ベクトルを変更
 	if (input_->PushKey(DIK_A)) {
-		worldTransform_.rotation_.y += kRotSpeed;
+		worldTransform_.rotation_.y -= kRotSpeed;
 	}
 	else if (input_->PushKey(DIK_D)) {
-		worldTransform_.rotation_.y -= kRotSpeed;
+		worldTransform_.rotation_.y += kRotSpeed;
 	}
 
 }
@@ -122,7 +121,7 @@ void Player::Attack() {
 
 		//弾を生成し初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
 		//弾を登録する
 		bullets_.push_back(newBullet);

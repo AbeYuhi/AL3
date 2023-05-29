@@ -10,6 +10,8 @@ GameScene::~GameScene() {
 	delete player_;
 	delete enemy_;
 	delete debugCamera_;
+	delete skydome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -46,12 +48,19 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
+
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize({0, 0, -50}, {0, 0, 0});
+
+	//自キャラとレールカメラの親子関係
+	player_->SetParent(&railCamera_->GetWorldTtansform());
+
 }
 
 void GameScene::Update() {
 	//デバッグカメラの更新
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_0)) {
+	if (input_->TriggerKey(DIK_0) && input_->PushKey(DIK_LSHIFT)) {
 		if (isDebugCameraActive_) {
 			isDebugCameraActive_ = false;
 		}
@@ -69,8 +78,12 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 	else {
-		//ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		railCamera_->Update({0, 0, -0.1f}, {0, 0, 0});
+
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		//ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
 	}
 
 	ImGui::Begin("DebugCamera");
@@ -154,7 +167,7 @@ void GameScene::CheckAllCollisions() {
 	std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
 
 #pragma region 自キャラと敵弾の当たり判定
-	posA = player_->GetPlayerPosition();
+	posA = player_->GetWorldPosition();
 
 	for (auto bullet : enemyBullets) {
 		posB = bullet->GetPos();
@@ -173,7 +186,7 @@ void GameScene::CheckAllCollisions() {
 #pragma endregion
 
 #pragma region 敵キャラと自弾の当たり判定
-	posA = enemy_->GetEnemyPosition();
+	posA = enemy_->GetWorldPosition();
 
 	for (auto bullet : playerBullets) {
 		posB = bullet->GetPos();
