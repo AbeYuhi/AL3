@@ -112,3 +112,46 @@ Vector3 Normalize(const Vector3& v1) {
 
 	return v2;
 }
+
+Vector3 CatmullRomSpline(std::vector<Vector3> controlPoints, float t) {
+	Vector3 vector;
+	//controlePointsの要素数
+	auto controlPointsNum = controlPoints.size();
+	//tがどこの補間を進んでるかを求める
+	auto movedRate = 1.0f / controlPointsNum;
+
+	auto moveRate = 0;
+	
+	for (int i = 0; i < controlPointsNum - 1; i++) {
+		auto rate = i * movedRate;
+
+		if (rate <= t && t < rate + movedRate) {
+			moveRate = i;
+			break;
+		}
+	}
+
+	float movedT = t * (controlPointsNum);
+	movedT -= int(movedT);
+
+	if (moveRate == 0) {
+		vector = CatmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], movedT);
+	} else if (moveRate == controlPointsNum - 2) {
+		vector = CatmullRom(controlPoints[controlPointsNum - 3], controlPoints[controlPointsNum - 2], controlPoints[controlPointsNum - 1], controlPoints[controlPointsNum - 1], movedT);
+	}
+	else {
+		vector = CatmullRom(controlPoints[moveRate - 1], controlPoints[moveRate], controlPoints[moveRate + 1], controlPoints[moveRate + 2], movedT);
+	}
+
+	return vector;
+}
+
+Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {
+	Vector3 p;
+
+	p.x = 1.0f / 2.0f * (((-1.0f * p0.x) + 3.0f * p1.x - (3.0f * p2.x) + p3.x) * powf(t, 3) + (2.0f * p0.x - (5.0f * p1.x) + 4.0f * p2.x - p3.x) * powf(t, 2) + (-1.0f * p0.x + p2.x) * t + 2.0f * p1.x);
+	p.y = 1.0f / 2.0f * (((-1.0f * p0.y) + 3.0f * p1.y - (3.0f * p2.y) + p3.y) * powf(t, 3) + (2.0f * p0.y - (5.0f * p1.y) + 4.0f * p2.y - p3.y) * powf(t, 2) + (-1.0f * p0.y + p2.y) * t + 2.0f * p1.y);
+	p.z = 1.0f / 2.0f * (((-1.0f * p0.z) + 3.0f * p1.z - (3.0f * p2.z) + p3.z) * powf(t, 3) + (2.0f * p0.z - (5.0f * p1.z) + 4.0f * p2.z - p3.z) * powf(t, 2) + (-1.0f * p0.z + p2.z) * t + 2.0f * p1.z);
+
+	return p;
+}

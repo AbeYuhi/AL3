@@ -13,13 +13,15 @@ void RailCamera::Initialize(Vector3 position, Vector3 rotate) {
 	viewProjection_.Initialize();
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 	viewProjection_.matProjection = MakePerspectiveFovMatrix(viewProjection_.fovAngleY, viewProjection_.aspectRatio, viewProjection_.nearZ, viewProjection_.farZ);
-	}
+
+}
 
 
 void RailCamera::Update(Vector3 translation, Vector3 rotate) {
 
 	worldTransform_.translation_ += translation;
 	worldTransform_.rotation_ += rotate;
+
 
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 

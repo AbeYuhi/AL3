@@ -9,6 +9,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "PrimitiveDrawer.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
@@ -77,4 +78,8 @@ private: // メンバ変数
 	Skydome* skydome_ = 0;
 
 	RailCamera* railCamera_ = 0;
+
+
+	//スプライン制御点
+	std::vector<Vector3> controlPoints_;
 };

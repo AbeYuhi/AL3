@@ -55,6 +55,15 @@ void GameScene::Initialize() {
 	//自キャラとレールカメラの親子関係
 	player_->SetParent(&railCamera_->GetWorldTtansform());
 
+	//スプライン制御点
+	controlPoints_ = {
+		{0, 0, 0},
+		{10, 10, 0},
+		{10, 15, 0},
+		{20, 15, 0},
+		{20, 0, 0},
+		{30, 0, 0},
+	};
 }
 
 void GameScene::Update() {
@@ -78,7 +87,7 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 	else {
-		railCamera_->Update({0, 0, -0.1f}, {0, 0, 0});
+		railCamera_->Update({0, 0, 0}, {0, 0, 0});
 
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
@@ -99,6 +108,22 @@ void GameScene::Update() {
 
 	CheckAllCollisions();
 
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
+
+	std::vector<Vector3> pointsDrawing;
+	const size_t segmentCount = 100;
+	for (size_t i = 0; i < segmentCount + 1; i++) {
+		float t = 1.0f / segmentCount * i;
+		Vector3 pos = CatmullRomSpline(controlPoints_, t);
+		pointsDrawing.push_back(pos);
+	}
+
+	for (size_t i = 0; i < pointsDrawing.size() - 1; i++) {
+		Vector3 posA = pointsDrawing[i];
+		Vector3 posB = pointsDrawing[i + 1];
+		PrimitiveDrawer::GetInstance()->DrawLine3d(posA, posB, {1.0f, 0.0f, 0.0f, 1.0f});
+	}
+	pointsDrawing.clear();
 }
 
 void GameScene::Draw() {

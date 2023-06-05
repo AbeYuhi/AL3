@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <math.h>
 
 /// <summary>
@@ -36,3 +37,7 @@ float Length(const Vector3& v);
 float Length(const Vector3& v1, const Vector3& v2);
 
 Vector3 Normalize(const Vector3& v1);
+
+Vector3 CatmullRomSpline(std::vector<Vector3> controlPoints, float t);
+
+Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
