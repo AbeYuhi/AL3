@@ -114,36 +114,28 @@ Vector3 Normalize(const Vector3& v1) {
 }
 
 Vector3 CatmullRomSpline(std::vector<Vector3> controlPoints, float t) {
-	Vector3 vector;
+	Vector3 vector = { 0, 0, 0 };
 	//controlePointsの要素数
 	auto controlPointsNum = controlPoints.size();
 	//tがどこの補間を進んでるかを求める
-	auto movedRate = 1.0f / controlPointsNum;
+	auto movedRate = 1.0f / (controlPointsNum - 1);
+	auto section = int(t / movedRate);
 
-	auto moveRate = 0;
-	
-	for (int i = 0; i < controlPointsNum - 1; i++) {
-		auto rate = i * movedRate;
+	float sectionT = t / movedRate;
+	sectionT -= int(sectionT);
 
-		if (rate <= t && t < rate + movedRate) {
-			moveRate = i;
-			break;
-		}
+	Vector3 pos = { 0, 0, 0 };
+	if (section == 0) {
+		pos = CatmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], sectionT);
+	}
+	else if (section == 4 || section == 5) {
+		pos = CatmullRom(controlPoints[3], controlPoints[4], controlPoints[5], controlPoints[5], sectionT);
+	}
+	else if(section >= 1 && section <= 3){
+		pos = CatmullRom(controlPoints[section - 1], controlPoints[section], controlPoints[section + 1], controlPoints[section + 2], sectionT);
 	}
 
-	float movedT = t * (controlPointsNum);
-	movedT -= int(movedT);
-
-	if (moveRate == 0) {
-		vector = CatmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], movedT);
-	} else if (moveRate == controlPointsNum - 2) {
-		vector = CatmullRom(controlPoints[controlPointsNum - 3], controlPoints[controlPointsNum - 2], controlPoints[controlPointsNum - 1], controlPoints[controlPointsNum - 1], movedT);
-	}
-	else {
-		vector = CatmullRom(controlPoints[moveRate - 1], controlPoints[moveRate], controlPoints[moveRate + 1], controlPoints[moveRate + 2], movedT);
-	}
-
-	return vector;
+	return pos;
 }
 
 Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {

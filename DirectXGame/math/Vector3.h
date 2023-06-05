@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <math.h>
+#include <cassert>
 
 /// <summary>
 /// 3次元ベクトル

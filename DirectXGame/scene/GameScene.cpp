@@ -37,6 +37,8 @@ void GameScene::Initialize() {
 	viewProjection_.farZ = 1000;
 	viewProjection_.Initialize();
 
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
+
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -107,23 +109,6 @@ void GameScene::Update() {
 	}
 
 	CheckAllCollisions();
-
-	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
-
-	std::vector<Vector3> pointsDrawing;
-	const size_t segmentCount = 100;
-	for (size_t i = 0; i < segmentCount + 1; i++) {
-		float t = 1.0f / segmentCount * i;
-		Vector3 pos = CatmullRomSpline(controlPoints_, t);
-		pointsDrawing.push_back(pos);
-	}
-
-	for (size_t i = 0; i < pointsDrawing.size() - 1; i++) {
-		Vector3 posA = pointsDrawing[i];
-		Vector3 posB = pointsDrawing[i + 1];
-		PrimitiveDrawer::GetInstance()->DrawLine3d(posA, posB, {1.0f, 0.0f, 0.0f, 1.0f});
-	}
-	pointsDrawing.clear();
 }
 
 void GameScene::Draw() {
@@ -162,6 +147,21 @@ void GameScene::Draw() {
 	if (enemy_) {
 		enemy_->Draw(viewProjection_);
 	}
+
+
+	std::vector<Vector3> pointsDrawing;
+	const size_t segmentCount = 100;
+	for (size_t i = 0; i < segmentCount + 1; i++) {
+		float t = 1.0f / segmentCount * i;
+		Vector3 pos = CatmullRomSpline(controlPoints_, t);
+		pointsDrawing.push_back(pos);
+	}
+	for (size_t i = 0; i < pointsDrawing.size() - 2; i++) {
+		Vector3 posA = pointsDrawing[i];
+		Vector3 posB = pointsDrawing[i + 1];
+		PrimitiveDrawer::GetInstance()->DrawLine3d(posA, posB, { 1.0f, 0.0f, 0.0f, 1.0f });
+	}
+	pointsDrawing.clear();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
