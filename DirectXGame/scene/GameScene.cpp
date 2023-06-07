@@ -89,8 +89,17 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 	else {
-		railCamera_->Update({0, 0, 0}, {0, 0, 0});
+		Vector3 eye = {};
+		Vector3 target = {};
 
+
+
+		Vector3 railCameraRotation = {};
+		railCameraRotation.y = std::atan2(velocity_.x, velocity_.z);
+		float widthLength = Length({ velocity_.x, 0, velocity_.z });
+		railCameraRotation.worldTransform_.rotation_.x = std::atan2(-velocity_.y, widthLength); */
+
+		railCamera_->Update(eye, {0, 0, 0});
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 		//ビュープロジェクション行列の転送
@@ -147,7 +156,6 @@ void GameScene::Draw() {
 	if (enemy_) {
 		enemy_->Draw(viewProjection_);
 	}
-
 
 	std::vector<Vector3> pointsDrawing;
 	const size_t segmentCount = 100;
