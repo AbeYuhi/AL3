@@ -99,7 +99,7 @@ void GameScene::Update() {
 		float widthLength = Length({ velocity_.x, 0, velocity_.z });
 		railCameraRotation.worldTransform_.rotation_.x = std::atan2(-velocity_.y, widthLength); */
 
-		railCamera_->Update(eye, {0, 0, 0});
+		railCamera_->Update(eye, );
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 		//ビュープロジェクション行列の転送
