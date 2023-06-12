@@ -8,6 +8,16 @@ Vector3 operator+=(Vector3& num1, const Vector3& num2) {
 	return num1;
 }
 
+Vector3 operator+(Vector3& num1, const Vector3& num2) {
+	Vector3 num3;
+
+	num3.x = num1.x + num2.x;
+	num3.y = num1.y + num2.y;
+	num3.z = num1.z + num2.z;
+
+	return num3;
+}
+
 Vector3 operator-=(Vector3& num1, const Vector3& num2) {
 	num1.x = num1.x - num2.x;
 	num1.y = num1.y - num2.y;
@@ -128,11 +138,14 @@ Vector3 CatmullRomSpline(std::vector<Vector3> controlPoints, float t) {
 	if (section == 0) {
 		pos = CatmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], sectionT);
 	}
-	else if (section == 4 || section == 5) {
+	else if (section == 4) {
 		pos = CatmullRom(controlPoints[3], controlPoints[4], controlPoints[5], controlPoints[5], sectionT);
 	}
 	else if(section >= 1 && section <= 3){
 		pos = CatmullRom(controlPoints[section - 1], controlPoints[section], controlPoints[section + 1], controlPoints[section + 2], sectionT);
+	} 
+	else {
+		pos = CatmullRom(controlPoints[3], controlPoints[4], controlPoints[5], controlPoints[5], t);
 	}
 
 	return pos;

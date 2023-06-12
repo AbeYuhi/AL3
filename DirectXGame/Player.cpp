@@ -20,7 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	this->textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_.z = 20;
+	//worldTransform_.translation_.z = 20;
 
 	input_ = Input::GetInstance();
 }

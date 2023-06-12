@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -14,6 +15,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#define M_PI 3.14f
 
 /// <summary>
 /// ゲームシーン
@@ -78,7 +80,7 @@ private: // メンバ変数
 	Skydome* skydome_ = 0;
 
 	RailCamera* railCamera_ = 0;
-
+	float railCameraSplineT = 0;
 
 	//スプライン制御点
 	std::vector<Vector3> controlPoints_;

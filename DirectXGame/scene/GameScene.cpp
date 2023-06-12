@@ -56,6 +56,7 @@ void GameScene::Initialize() {
 
 	//自キャラとレールカメラの親子関係
 	player_->SetParent(&railCamera_->GetWorldTtansform());
+	railCameraSplineT = 0;
 
 	//スプライン制御点
 	controlPoints_ = {
@@ -81,34 +82,53 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-
+		ImGui::Begin("DebugCamera");
+		ImGui::Text("ON");
+		ImGui::End();
+		if (input_->PushKey(DIK_LSHIFT)) {
+			debugCamera_->Update();
+		}
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		//ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	}
+
+	Vector3 eye = {};
+	Vector3 target = {};
+	Vector3 forward = {};
+	float targetCatmull = 0;
+
+	if (railCameraSplineT > 1) {
+		railCameraSplineT = 1;
+	}
 	else {
-		Vector3 eye = {};
-		Vector3 target = {};
+		railCameraSplineT += 1.0f / 1000;
+	}
+	targetCatmull = railCameraSplineT + 1.0f / 1000;
+	eye = CatmullRomSpline(controlPoints_, railCameraSplineT);
+	target = CatmullRomSpline(controlPoints_, targetCatmull);
+	forward = target - eye;
 
+	Vector3 railCameraRotation = {};
+	railCameraRotation.y = std::atan2(fabs(forward.x), fabs(forward.z));
+	float widthLength = Length({forward.x, 0, forward.z});
+	railCameraRotation.x = std::atan2(-forward.y, widthLength);
 
+	railCamera_->Update(eye, railCameraRotation);
 
-		Vector3 railCameraRotation = {};
-		railCameraRotation.y = std::atan2(velocity_.x, velocity_.z);
-		float widthLength = Length({ velocity_.x, 0, velocity_.z });
-		railCameraRotation.worldTransform_.rotation_.x = std::atan2(-velocity_.y, widthLength); */
-
-		railCamera_->Update(eye, );
+	if (!isDebugCameraActive_) {
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 		//ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	}
 
-	ImGui::Begin("DebugCamera");
-	ImGui::Text("True(1) or False(0), %d", isDebugCameraActive_);
-	ImGui::Text("%f", viewProjection_.farZ);
+	ImGui::Begin("SplineCamera");
+	ImGui::SliderFloat3("EyePos", &eye.x, -100, 100);
+	ImGui::SliderFloat3("TargetPos", &target.x, -100, 100);
+	ImGui::SliderFloat3("Rotetion", &railCameraRotation.x, -2 * M_PI, 2 * M_PI);
+	ImGui::SliderFloat("T", &railCameraSplineT, 0, 1);
 	ImGui::End();
 
 	player_->Update();
