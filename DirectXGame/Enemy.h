@@ -11,6 +11,7 @@
 #include "EnemyBullet.h"
 
 class Player;
+class GameScene;
 
 class Enemy
 {
@@ -31,7 +32,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 pos);
 
 	/// <summary>
 	/// 更新
@@ -63,7 +64,8 @@ public:
 		worldPos.z = worldTransform_.matWorld_.m[3][2];
 		return worldPos;
 	}
-	const std::list<EnemyBullet*> GetBullets();
+	inline void SetGameScene(GameScene* gamescene) { gameScene_ = gamescene; }
+	inline bool IsDead() { return isDead_; }
 	static const int kSize = 2;
 
 private:
@@ -72,6 +74,8 @@ private:
 
 	void PhaseLeave();
 
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
@@ -82,9 +86,10 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approach;
 
-	std::list<EnemyBullet*> bullets_;
 	int32_t bulletCooldown = 0u;
 
 	//自キャラのクラスポインタ
 	Player* player_ = nullptr;
+
+	bool isDead_;
 };

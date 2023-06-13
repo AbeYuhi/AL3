@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include "GameScene.h"
 
 Enemy::Enemy()
 {
@@ -8,13 +9,10 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
 }
 
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle) {
+void Enemy::Initialize(Model* model, uint32_t textureHandle, Vector3 pos) {
 	assert(model);
 
 	this->model_ = model;
@@ -22,21 +20,14 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_.x = 10;
+	worldTransform_.translation_ = pos;
 
 	PhaseApproachInitialize();
-
+	
+	isDead_ = false;
 }
 
 void Enemy::Update() {
-
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			return true;
-		}
-		bullet->Update();
-		return false;
-	});
 
 	switch (phase_)
 	{
@@ -53,14 +44,7 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
-
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	for (auto& bullet : bullets_) {
-		if (bullet) {
-			bullet->Draw(viewProjection);
-		}
-	}
 }
 
 void Enemy::Fire() {
@@ -81,8 +65,7 @@ void Enemy::Fire() {
 	EnemyBullet* newBullet(new EnemyBullet());
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
-	bullets_.push_back(newBullet);
-
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 void Enemy::PhaseApproachInitialize() {
@@ -97,7 +80,7 @@ void Enemy::PhaseApproach() {
 
 	worldTransform_.translation_ += {0, 0, -0.2f };
 
-	if (worldTransform_.translation_.z <= -10) {
+	if (worldTransform_.translation_.z <= -20) {
 		phase_ = Phase::Leave;
 	}
 }
@@ -105,16 +88,12 @@ void Enemy::PhaseApproach() {
 void Enemy::PhaseLeave() {
 	worldTransform_.translation_ += {0, 0, 0.2f };
 
-	if (worldTransform_.translation_.z >= 10) {
+	if (worldTransform_.translation_.z >= 20) {
 		PhaseApproachInitialize();
 		phase_ = Phase::Approach;
 	}
 }
 
 void Enemy::OnCollision() {
-
-}
-
-const std::list<EnemyBullet*> Enemy::GetBullets() {
-	return bullets_;
+	isDead_ = true;
 }
