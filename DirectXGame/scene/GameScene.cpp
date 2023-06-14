@@ -24,6 +24,7 @@ void GameScene::Initialize() {
 
 	textureHandle = TextureManager::Load("Player.png");
 	enemyTexture = TextureManager::Load("Slime.png");
+	TextureManager::Load("Reticle.png");
 	model_ = Model::Create();
 
 	player_ = new Player();
@@ -90,7 +91,7 @@ void GameScene::Update() {
 
 	UpdateEnemyPopCommands();
 
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	enemys_.remove_if([](Enemy* enemy) {
 		if (enemy->IsDead()) {
@@ -163,7 +164,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

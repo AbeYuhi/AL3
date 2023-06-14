@@ -2,9 +2,11 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include "WinApp.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
+#include "Sprite.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
@@ -30,7 +32,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(ViewProjection viewProjection);
 
 	/// <summary>
 	/// 描画
@@ -51,6 +53,8 @@ public:
 	/// 衝突したときに呼び出される関数
 	/// </summary>
 	void OnCollision();
+
+	void DrawUI();
 
 	//ゲッターセッター
 	inline Vector3 GetWorldPosition() {
@@ -82,4 +86,9 @@ private:
 	std::list<PlayerBullet*> bullets_;
 
 	Enemy* enemy_ = nullptr;
+
+	//レティクル
+	WorldTransform worldTransform3DReticle_;
+	Sprite* sprite2DReticle_ = nullptr;
+
 };

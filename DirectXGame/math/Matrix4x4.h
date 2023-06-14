@@ -18,6 +18,7 @@ Matrix4x4 operator+=(Matrix4x4& matrix1, const Matrix4x4& matrix2);
 Matrix4x4 operator-=(Matrix4x4& matrix1, const Matrix4x4& matrix2);
 Matrix4x4 operator*=(Matrix4x4& matrix1, const float num2);
 Matrix4x4 operator*=(Matrix4x4& matrix1, const Matrix4x4& matrix2);
+Matrix4x4 operator*(Matrix4x4& matrix1, const Matrix4x4& matrix2);
 
 
 Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2);

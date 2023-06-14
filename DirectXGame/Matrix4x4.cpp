@@ -59,6 +59,11 @@ Matrix4x4 operator*=(Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 
 	return matrix1;
 }
+Matrix4x4 operator*(Matrix4x4& matrix1, const Matrix4x4& matrix2) {
+	Matrix4x4 matrix3 = Multiply(matrix1, matrix2);
+
+	return matrix3;
+}
 
 //関数
 Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2) {

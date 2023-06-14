@@ -79,6 +79,9 @@ private: // メンバ変数
 
 	//自キャラ
 	Player* player_ = 0;
+	//2Dレティクル
+
+
 	//敵キャラ
 	std::list<Enemy*> enemys_;
 	uint32_t enemyTexture = 0;
