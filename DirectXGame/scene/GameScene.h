@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -48,4 +49,11 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	ViewProjection viewProjection_;
+
+	uint32_t playerHundle_ = 0;
+	std::unique_ptr<Model> playerModel_ = nullptr;
+	WorldTransform playerWorldTransform_;
+
+
 };

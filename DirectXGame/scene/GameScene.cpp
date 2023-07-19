@@ -11,6 +11,11 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	viewProjection_.Initialize();
+
+	playerHundle_ = TextureManager::Load("Player.png");
+	playerModel_.reset(Model::Create());
+	playerWorldTransform_.Initialize();
 }
 
 void GameScene::Update() {}
@@ -41,6 +46,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	
+	playerModel_->Draw(playerWorldTransform_, viewProjection_, playerHundle_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
