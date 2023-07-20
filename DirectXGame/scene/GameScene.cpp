@@ -11,14 +11,34 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	//デバッグカメラ
+	debugCamera_ = std::make_unique<DebugCamera>(1920, 720);
+
 	viewProjection_.Initialize();
 
-	playerHundle_ = TextureManager::Load("Player.png");
-	playerModel_.reset(Model::Create());
-	playerWorldTransform_.Initialize();
+	skydomeModel_.reset(Model::CreateFromOBJ("Skydome", true));
+	groundModel_.reset(Model::CreateFromOBJ("Ground", true));
+	playerModel_.reset(Model::CreateFromOBJ("Player", true));
+
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize(skydomeModel_.get());
+
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(groundModel_.get());
+
+	player_ = std::make_unique<Player>();
+	player_->Initialize(playerModel_.get());
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	debugCamera_->Update();
+	viewProjection_ = debugCamera_->GetViewProjection();
+
+	skydome_->Update();	
+	ground_->Update();	
+	player_->Update();	
+}
 
 void GameScene::Draw() {
 
@@ -46,8 +66,11 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
-	playerModel_->Draw(playerWorldTransform_, viewProjection_, playerHundle_);
+
+	ground_->Draw(viewProjection_);
+	skydome_->Draw(viewProjection_);
+	player_->Draw(viewProjection_);
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
