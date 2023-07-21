@@ -12,9 +12,6 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	//デバッグカメラ
-	debugCamera_ = std::make_unique<DebugCamera>(1920, 720);
-
 	viewProjection_.Initialize();
 
 	skydomeModel_.reset(Model::CreateFromOBJ("Skydome", true));
@@ -29,11 +26,17 @@ void GameScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize(playerModel_.get());
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
 }
 
 void GameScene::Update() {
-	debugCamera_->Update();
-	viewProjection_ = debugCamera_->GetViewProjection();
+	followCamera_->Update();
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
 
 	skydome_->Update();	
 	ground_->Update();	
