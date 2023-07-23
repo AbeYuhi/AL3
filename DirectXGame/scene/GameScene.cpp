@@ -12,11 +12,19 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+
 	viewProjection_.Initialize();
 
 	skydomeModel_.reset(Model::CreateFromOBJ("Skydome", true));
 	groundModel_.reset(Model::CreateFromOBJ("Ground", true));
-	playerModel_.reset(Model::CreateFromOBJ("Player", true));
+	playerHeadModel_.reset(Model::CreateFromOBJ("PHead", true));
+	playerBodyModel_.reset(Model::CreateFromOBJ("PBody", true));
+	playerLeftArmModel_.reset(Model::CreateFromOBJ("PLeftArm", true));
+	playerRightArmModel_.reset(Model::CreateFromOBJ("PRightArm", true));
+	playerWeaponModel_.reset(Model::CreateFromOBJ("Hummer", true));
+	enemyBodyModel_.reset(Model::CreateFromOBJ("Enemy", true));
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(skydomeModel_.get());
@@ -25,11 +33,20 @@ void GameScene::Initialize() {
 	ground_->Initialize(groundModel_.get());
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(playerModel_.get());
+	std::vector<Model*> playerModels = {
+		playerHeadModel_.get(), playerBodyModel_.get(), playerLeftArmModel_.get(), playerRightArmModel_.get(), playerWeaponModel_.get()
+	};
+	player_->Initialize(playerModels);
 
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();
+	enemy_ = std::make_unique<Enemy>();
+	std::vector<Model*> enemyModels = {
+		enemyBodyModel_.get()
+	};
+	enemy_->Initialize(enemyModels);
+
+	//セッター
 	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
 }
 
 void GameScene::Update() {
@@ -41,6 +58,7 @@ void GameScene::Update() {
 	skydome_->Update();	
 	ground_->Update();	
 	player_->Update();	
+	enemy_->Update();	
 }
 
 void GameScene::Draw() {
@@ -72,8 +90,8 @@ void GameScene::Draw() {
 
 	ground_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

@@ -58,12 +58,6 @@
     <Filter Include="ヘッダー ファイル\Ground">
       <UniqueIdentifier>{da137fed-ab4a-46a4-aaab-23c3e8d3dbf4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Player">
-      <UniqueIdentifier>{c845992d-fa14-4c73-ace6-7a2ae0d550f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Player">
-      <UniqueIdentifier>{5cc9c99e-bce7-4243-adc8-6522ba491e05}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Skydome">
       <UniqueIdentifier>{34333473-e9fb-4e59-aba6-00296ba2c245}</UniqueIdentifier>
     </Filter>
@@ -75,6 +69,27 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\FollowCamera">
       <UniqueIdentifier>{282ebdc6-d563-4025-b0cb-9aa88ddf00af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\WorldTransform">
+      <UniqueIdentifier>{0fea9ec1-b4df-40c5-b8f2-16ada060943a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Entity">
+      <UniqueIdentifier>{3a3af91d-8abc-4d7a-90c0-598b9d8f8f79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Entity\Player">
+      <UniqueIdentifier>{c845992d-fa14-4c73-ace6-7a2ae0d550f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity">
+      <UniqueIdentifier>{8cd1e133-59af-4c61-8645-38b7c73691c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity\Player">
+      <UniqueIdentifier>{5cc9c99e-bce7-4243-adc8-6522ba491e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Entity\Enemy">
+      <UniqueIdentifier>{caec1a14-9d3e-4ee4-8a4a-c38c16c6dada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Entity\Enemy">
+      <UniqueIdentifier>{894caeaf-dfef-4a5a-b7a0-8e4e9ff825f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +112,7 @@
       <Filter>ソース ファイル\Ground</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル\Player</Filter>
+      <Filter>ソース ファイル\Entity\Player</Filter>
     </ClCompile>
     <ClCompile Include="Skydome.cpp">
       <Filter>ソース ファイル\Skydome</Filter>
@@ -113,6 +128,15 @@
     </ClCompile>
     <ClCompile Include="Matrix4x4.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldTransform.cpp">
+      <Filter>ソース ファイル\WorldTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>ソース ファイル\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\Entity\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,7 +228,7 @@
       <Filter>ヘッダー ファイル\Ground</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル\Player</Filter>
+      <Filter>ヘッダー ファイル\Entity\Player</Filter>
     </ClInclude>
     <ClInclude Include="Skydome.h">
       <Filter>ヘッダー ファイル\Skydome</Filter>
@@ -217,6 +241,12 @@
     </ClInclude>
     <ClInclude Include="Vector3_Math.hpp">
       <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>ヘッダー ファイル\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

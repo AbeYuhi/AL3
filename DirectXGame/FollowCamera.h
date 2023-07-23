@@ -14,10 +14,9 @@ public:
 
 	void Update();
 
-
 public: //ゲッターセッター
 	inline void SetTarget(const WorldTransform* target) { target_ = target; }
-	inline ViewProjection GetViewProjection() { return viewProjection_; }
+	inline ViewProjection &GetViewProjection() { return viewProjection_; }
 private:
 	ViewProjection viewProjection_;
 	//追従対象

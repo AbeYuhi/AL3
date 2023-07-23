@@ -14,6 +14,7 @@
 #include "Skydome.h"
 #include "Ground.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
 
 /// <summary>
@@ -64,6 +65,13 @@ private: // メンバ変数
 	std::unique_ptr<Model> groundModel_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
 
-	std::unique_ptr<Model> playerModel_ = nullptr;
+	std::unique_ptr<Model> playerHeadModel_ = nullptr;
+	std::unique_ptr<Model> playerBodyModel_ = nullptr;
+	std::unique_ptr<Model> playerLeftArmModel_ = nullptr;
+	std::unique_ptr<Model> playerRightArmModel_ = nullptr;
+	std::unique_ptr<Model> playerWeaponModel_ = nullptr;
 	std::unique_ptr<Player> player_ = nullptr;
+
+	std::unique_ptr<Model> enemyBodyModel_ = nullptr;
+	std::unique_ptr<Enemy> enemy_ = nullptr;
 };
