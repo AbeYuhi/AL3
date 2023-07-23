@@ -1,9 +1,6 @@
 #include "Player.h"
 #include "Vector3_Math.hpp"
 
-Player::Player() {}
-Player::~Player() {}
-
 void Player::Initialize(const std::vector<Model*>& models) {
 	Entity::Initialize(models);
 
@@ -21,9 +18,32 @@ void Player::Initialize(const std::vector<Model*>& models) {
 
 	InitializeFloatingGimmick();
 	InitializeAttackGimmick();
+
+	GlobalVariables* globalVaruables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	//グループを追加
+	globalVaruables->CreateGroup(groupName);
+	globalVaruables->AddValue(groupName, "Head Translation", worldTransformHead_.translation_);
+	globalVaruables->AddValue(groupName, "ArmL Translation", worldTransformLeftArm_.translation_);
+	globalVaruables->AddValue(groupName, "ArmR Translation", worldTransformRightArm_.translation_);
+	globalVaruables->AddValue(groupName, "floatingCycle", cycle_);
+	globalVaruables->AddValue(groupName, "swingWidth", swingWidth_);
+	globalVaruables->AddValue(groupName, "attackCycle", attackCycle_);
+}
+
+void Player::ApplyGlobalVariables() {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	worldTransformHead_.translation_ = globalVariables->GetVector3Value(groupName, "Head Translation");
+	worldTransformLeftArm_.translation_ = globalVariables->GetVector3Value(groupName, "ArmL Translation");
+	worldTransformRightArm_.translation_ = globalVariables->GetVector3Value(groupName, "ArmR Translation");
+	cycle_ = globalVariables->GetIntValue(groupName, "floatingCycle");
+	swingWidth_ = globalVariables->GetFloatValue(groupName, "swingWidth");
+	attackCycle_ = globalVariables->GetIntValue(groupName, "attackCycle");
 }
 
 void Player::Update() {
+	ApplyGlobalVariables();
 	
 	if (behaviorRequest_) {
 		behavior_ = behaviorRequest_.value();
@@ -50,15 +70,6 @@ void Player::Update() {
 		BehaviorAttackUpdata();
 		break;
 	}
-
-	ImGui::Begin("PlayerWindow");
-	ImGui::SliderFloat3("Head", &worldTransformHead_.translation_.x, -5, 5);
-	ImGui::SliderFloat3("LeftArm", &worldTransformLeftArm_.translation_.x, -5, 5);
-	ImGui::SliderFloat3("RightArm", &worldTransformRightArm_.translation_.x, -5, 5);
-	ImGui::SliderInt("SwingCycle", &cycle_, 1, 120);
-	ImGui::SliderFloat("SwingWidth", &swingWidth_, 0.0f, 10.0f);
-	ImGui::SliderInt("AttackCycle", &attackCycle_, 1, 120);
-	ImGui::End();
 
 	//行列の更新
 	worldTransform_.UpdateMatrix();

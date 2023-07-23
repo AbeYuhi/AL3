@@ -8,15 +8,18 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "Entity.h"
+#include "GlobalVariables.h"
 #define M_PI 3.14f
 
 class Player : public Entity
 {
 public:
-	Player();
-	~Player();
+	Player() = default;
+	~Player() = default;
 
 	void Initialize(const std::vector<Model*>& models) override;
+
+	void ApplyGlobalVariables();
 
 	void Update() override;
 

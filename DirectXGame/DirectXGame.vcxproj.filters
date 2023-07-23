@@ -91,6 +91,12 @@
     <Filter Include="ヘッダー ファイル\Entity\Enemy">
       <UniqueIdentifier>{894caeaf-dfef-4a5a-b7a0-8e4e9ff825f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GlobalVariables">
+      <UniqueIdentifier>{28bba170-ba16-412b-b0cc-fe8307a648e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GlobalVariables">
+      <UniqueIdentifier>{46c72b12-6249-4594-9e13-dbf9e6607def}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -137,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>ソース ファイル\Entity\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalVariables.cpp">
+      <Filter>ソース ファイル\GlobalVariables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>ヘッダー ファイル\Entity\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalVariables.h">
+      <Filter>ヘッダー ファイル\GlobalVariables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
