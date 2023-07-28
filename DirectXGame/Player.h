@@ -73,5 +73,7 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 	//次のふるまいリクエスト
 	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
+
+	bool isSetJoyState_;
 };
 

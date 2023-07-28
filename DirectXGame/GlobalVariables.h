@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include "ImGuiManager.h"
+#include "Input.h"
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -49,6 +50,8 @@ public:
 	void SetValue(const std::string& groupName, const std::string& key, float value);
 	//値のセット(Vec3)
 	void SetValue(const std::string& groupName, const std::string& key, const Vector3& value);
+	//値のセット(XINPUT_STATE)
+	void SetValue(const std::string& groupName, const std::string& key, const XINPUT_STATE& value);
 
 	//項目の追加(int)
 	void AddValue(const std::string& groupName, const std::string& key, int32_t value);
@@ -61,10 +64,15 @@ public:
 	int32_t GetIntValue(const std::string& groupName, const std::string& key) const;
 	float GetFloatValue(const std::string& groupName, const std::string& key) const;
 	Vector3 GetVector3Value(const std::string& groupName, const std::string& key) const;
+	XINPUT_STATE GetXINPUT_STATEValue(const std::string& groupName, const std::string& key) const;
+
+	//
+	inline unsigned int IsFrame() { return frame_; }
+	inline bool IsReplay() { return isReplay_; }
 
 	//項目
 	struct Item {
-		std::variant<int32_t, float, Vector3> value;
+		std::variant<int32_t, float, Vector3, XINPUT_STATE> value;
 	};
 	//グループ
 	struct Group {
@@ -72,6 +80,16 @@ public:
 	};
 	//全データ
 	std::map<std::string, Group> dates_;
+
+	//フレーム
+	static int32_t frame_;
+
+	//リプレイ中か
+	static bool isReplay_;
+	static bool ReplaInitialize_;
+
+	//コントローラー
+	static XINPUT_STATE joyState_;
 
 private:
 	GlobalVariables() = default;

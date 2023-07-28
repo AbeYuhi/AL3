@@ -97,6 +97,12 @@
     <Filter Include="ヘッダー ファイル\GlobalVariables">
       <UniqueIdentifier>{46c72b12-6249-4594-9e13-dbf9e6607def}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Replay">
+      <UniqueIdentifier>{7bcc63ac-5601-4afc-b80c-c4f7c23b7c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Replay">
+      <UniqueIdentifier>{3211d92b-6558-4fb1-9068-4ada301f47b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -146,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="GlobalVariables.cpp">
       <Filter>ソース ファイル\GlobalVariables</Filter>
+    </ClCompile>
+    <ClCompile Include="Replay.cpp">
+      <Filter>ソース ファイル\Replay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="GlobalVariables.h">
       <Filter>ヘッダー ファイル\GlobalVariables</Filter>
+    </ClInclude>
+    <ClInclude Include="Replay.h">
+      <Filter>ヘッダー ファイル\Replay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

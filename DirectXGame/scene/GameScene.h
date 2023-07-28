@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "FollowCamera.h"
+#include "Replay.h"
 
 /// <summary>
 /// ゲームシーン

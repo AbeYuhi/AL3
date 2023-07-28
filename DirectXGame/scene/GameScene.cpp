@@ -47,9 +47,11 @@ void GameScene::Initialize() {
 	//セッター
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
+	player_->SetFrame(&GlobalVariables::frame_);
 }
 
 void GameScene::Update() {
+
 	followCamera_->Update();
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
@@ -58,7 +60,7 @@ void GameScene::Update() {
 	skydome_->Update();	
 	ground_->Update();	
 	player_->Update();	
-	enemy_->Update();	
+	enemy_->Update();
 }
 
 void GameScene::Draw() {

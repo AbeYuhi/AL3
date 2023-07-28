@@ -43,6 +43,7 @@ void Player::ApplyGlobalVariables() {
 }
 
 void Player::Update() {
+
 	ApplyGlobalVariables();
 	
 	if (behaviorRequest_) {
@@ -78,6 +79,8 @@ void Player::Update() {
 	worldTransformLeftArm_.UpdateMatrix();
 	worldTransformRightArm_.UpdateMatrix();
 	worldTransformWeapon_.UpdateMatrix();
+
+	isSetJoyState_ = false;
 }
 
 void Player::Draw(ViewProjection viewProjection) {
@@ -107,10 +110,18 @@ void Player::UpdateFloatingGimmick() {
 }
 
 void Player::BehaviorRootUpdata() {
-	XINPUT_STATE joyState;
-	if (Input::GetInstance()->GetJoystickStatePrevious(0, joyState)) {
+	GlobalVariables* globalVaruables = GlobalVariables::GetInstance();
+	if (!GlobalVariables::isReplay_) {
+		isSetJoyState_ = Input::GetInstance()->GetJoystickState(0, GlobalVariables::joyState_);
+	}
+	else {
+		GlobalVariables::joyState_ = globalVaruables->GetXINPUT_STATEValue("Replay", "joyState" + std::to_string(GlobalVariables::frame_));
+		isSetJoyState_ = true;
+	}
+
+	if (isSetJoyState_) {
 		//攻撃入力
-		if (joyState.Gamepad.bRightTrigger) {
+		if (GlobalVariables::joyState_.Gamepad.bRightTrigger) {
 			behaviorRequest_ = Player::Behavior::kAttack;
 		}
 
@@ -118,7 +129,7 @@ void Player::BehaviorRootUpdata() {
 		const float speed = 0.3f;
 		//移動量
 		Vector3 move = {
-			(float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY
+			(float)GlobalVariables::joyState_.Gamepad.sThumbLX, 0.0f, (float)GlobalVariables::joyState_.Gamepad.sThumbLY
 		};
 		//移動量を速さに反映
 		move = Normalize(move) * speed;

@@ -23,10 +23,12 @@ public:
 public: //ゲッターセッター
 	inline WorldTransform& GetWorldTransform() { return worldTransform_; }
 	inline void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+	inline void SetFrame(const int32_t* frame) { frame_ = frame; }
 
 protected:
 	const ViewProjection* viewProjection_;
 	WorldTransform worldTransform_;
 	std::vector<Model*> models_;
+	const int32_t* frame_;
 };
 

@@ -1,5 +1,15 @@
 #include "GlobalVariables.h"
 
+int GlobalVariables::frame_ = 0;
+
+//リプレイ中か
+bool GlobalVariables::isReplay_ = false;
+
+//false固定でいい
+bool GlobalVariables::ReplaInitialize_ = false;
+
+XINPUT_STATE GlobalVariables::joyState_ = {};
+
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables instance;
 	return &instance;
@@ -10,6 +20,8 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 }
 
 void GlobalVariables::Updates() {
+	frame_++;
+
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
@@ -25,40 +37,71 @@ void GlobalVariables::Updates() {
 		//グループの参照を取得
 		Group& group = itGroup->second;
 
-		if (!ImGui::BeginMenu(groupName.c_str())) {
-			continue;
+		if (groupName == "Replay") {
+			if (!isReplay_) {
+				std::string str = "currentFrameValue";
+				if (Input::GetInstance()->GetJoystickState(0, joyState_)) {
+					str = "joyState";
+					str += std::to_string(frame_).c_str();
+					SetValue(groupName, str, joyState_);
+				}
+
+				//リプレイを始めたいFrameの値
+				if (ImGui::Button("StartReplay")) {
+					SetValue(groupName, "startReplayFrame", frame_);
+				}
+				//リプレイを止めたいFrameの値
+				if (ImGui::Button("EndReplay")) {
+					SetValue(groupName, "endReplayFrame", frame_);
+				}
+
+				SaveFile(groupName);
+			}
+			else {
+				ImGui::Text("ReplayNow");
+				ImGui::Text("\n");
+				int32_t endFrame = GetIntValue(groupName, "endReplayFrame");
+				ImGui::SliderInt("frame", &frame_, 0, endFrame);
+			}
 		}
 
-		//各項目について
-		for (std::map<std::string, Item>::iterator itItem = group.items.begin(); itItem != group.items.end(); ++itItem) {
-			//各項目を取得
-			const std::string& itemName = itItem->first;
-			//項目の参照を取得
-			Item& item = itItem->second;
+		else {
 
-			if (std::holds_alternative<int32_t>(item.value)) {
-				int32_t* ptr = std::get_if<int32_t>(&item.value);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
+			if (!ImGui::BeginMenu(groupName.c_str())) {
+				continue;
 			}
-			if (std::holds_alternative<float>(item.value)) {
-				float* ptr = std::get_if<float>(&item.value);
-				ImGui::SliderFloat(itemName.c_str(), ptr, -10.0f, 10.0f);
+
+			//各項目について
+			for (std::map<std::string, Item>::iterator itItem = group.items.begin(); itItem != group.items.end(); ++itItem) {
+				//各項目を取得
+				const std::string& itemName = itItem->first;
+				//項目の参照を取得
+				Item& item = itItem->second;
+
+				if (std::holds_alternative<int32_t>(item.value)) {
+					int32_t* ptr = std::get_if<int32_t>(&item.value);
+					ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
+				}
+				if (std::holds_alternative<float>(item.value)) {
+					float* ptr = std::get_if<float>(&item.value);
+					ImGui::SliderFloat(itemName.c_str(), ptr, -10.0f, 10.0f);
+				}
+				if (std::holds_alternative<Vector3>(item.value)) {
+					Vector3* ptr = std::get_if<Vector3>(&item.value);
+					ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+				}
 			}
-			if (std::holds_alternative<Vector3>(item.value)) {
-				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+
+			//セーブ処理
+			ImGui::Text("\n");
+			if (ImGui::Button("Save")) {
+				SaveFile(groupName);
+				std::string message = std::format("{}.json saved.", groupName);
+				MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 			}
+
+			ImGui::EndMenu();
 		}
-
-		//セーブ処理
-		ImGui::Text("\n");
-		if (ImGui::Button("Save")) {
-			SaveFile(groupName);
-			std::string message = std::format("{}.json saved.", groupName);
-			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
-		}
-
-		ImGui::EndMenu();
 	}
 
 	ImGui::EndMenuBar();
@@ -104,6 +147,12 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			//float型のjson配列登録
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z });
+		}
+		//XINPUT_STATE
+		else if (std::holds_alternative<XINPUT_STATE>(item.value)) {
+			//XINPUT_STATE型のjson配列登録
+			XINPUT_STATE value = std::get<XINPUT_STATE>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({ value.dwPacketNumber , value.Gamepad.bLeftTrigger, value.Gamepad.bRightTrigger, value.Gamepad.sThumbLX, value.Gamepad.sThumbLY, value.Gamepad.sThumbRX, value.Gamepad.sThumbRY, value.Gamepad.wButtons});
 		}
 	}
 
@@ -204,9 +253,25 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			float value = itItem->get<float>();
 			SetValue(groupName, itemName, value);
 		}
+		//Vector3の値を保持していれば
 		else if (itItem->is_array() && itItem->size() == 3) {
 			//float型のjson配列登録
 			Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
+			SetValue(groupName, itemName, value);
+		}
+		//XINPUT_STATEの値を保持していれば
+		else if (itItem->is_array() && itItem->size() == 8) {
+			//XINPUT_STATE型のjson配列登録
+			XINPUT_STATE value;
+			value.dwPacketNumber = itItem->at(0);
+			value.Gamepad.bLeftTrigger = itItem->at(1);
+			value.Gamepad.bRightTrigger = itItem->at(2);
+			value.Gamepad.sThumbLX = itItem->at(3);
+			value.Gamepad.sThumbLY = itItem->at(4);
+			value.Gamepad.sThumbRX = itItem->at(5);
+			value.Gamepad.sThumbRY = itItem->at(6);
+			value.Gamepad.wButtons = itItem->at(7);
+			
 			SetValue(groupName, itemName, value);
 		}
 	}
@@ -233,6 +298,16 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 }
 
 void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const Vector3& value) {
+	//グループの参照を取得
+	Group& group = dates_[groupName];
+	//新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	//設定した項目をstd::mapに追加
+	group.items[key] = newItem;
+}
+
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const XINPUT_STATE& value) {
 	//グループの参照を取得
 	Group& group = dates_[groupName];
 	//新しい項目のデータを設定
@@ -342,4 +417,25 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	assert(itKey != group.items.end());
 
 	return std::get<Vector3>(itKey->second.value);
+}
+
+XINPUT_STATE GlobalVariables::GetXINPUT_STATEValue(const std::string& groupName, const std::string& key) const {
+	//グループを検索
+	std::map<std::string, Group>::const_iterator itGroup = dates_.find(groupName);
+	//未登録チェック
+	assert(itGroup != dates_.end());
+
+	//グループの参照を取得
+	Group group = itGroup->second;
+
+	//キーを検索
+	std::map<std::string, Item>::const_iterator itKey = group.items.find(key);
+
+	if (itKey == group.items.end() || frame_ >= GetIntValue(groupName, "endReplayFrame")) {
+		frame_ = GetIntValue(groupName, "startReplayFrame");
+		itKey = group.items.find("joyState" + std::to_string(frame_));
+		ReplaInitialize_ = true;
+	}
+
+	return std::get<XINPUT_STATE>(itKey->second.value);
 }
