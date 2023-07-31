@@ -29,6 +29,8 @@ public:
 
 	void ReplayPreparation();
 
+	void SettingFrame();
+
 	void EndInGame();
 
 	enum class GameStatus {

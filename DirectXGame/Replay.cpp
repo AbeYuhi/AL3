@@ -68,6 +68,8 @@ void Replay::ReplayUpdate() {
 		ReplayPreparation();
 	}
 
+	SettingFrame();
+
 	if(!globalVariables->GetXINPUT_STATEValue("Replay", "joyState" + std::to_string(gameScene_->GetFrame()), &joyState_)){
 		isReplay_ = false;
 		gameScene_->Initialize();
@@ -82,6 +84,77 @@ void Replay::ReplayPreparation() {
 	while (gameScene_->GetFrame() < targetFrame_) {
 		globalVariables->GetXINPUT_STATEValue("Replay", "joyState" + std::to_string(gameScene_->GetFrame()), &joyState_);
 		gameScene_->ReplayUpdate();
+	}
+
+	preFrame_ = gameScene_->GetFrame() - 1;
+}
+
+void Replay::SettingFrame() {
+	//0
+	if (Input::GetInstance()->PushKey(DIK_0)) {
+		gameScene_->Initialize();
+		targetFrame_ = 1;
+		ReplayPreparation();
+	}
+	//1
+	if (Input::GetInstance()->PushKey(DIK_1)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_2)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 2;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_3)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 3;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_4)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 4;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_5)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 5;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_6)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 6;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_7)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 7;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_8)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 8;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_9)) {
+		gameScene_->Initialize();
+		targetFrame_ = endFrame_ / 10 * 9;
+		ReplayPreparation();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		gameScene_->Initialize();
+		targetFrame_ = startFrame_;
+		ReplayPreparation();
 	}
 }
 
