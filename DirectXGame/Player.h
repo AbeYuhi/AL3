@@ -9,6 +9,7 @@
 #include "ImGuiManager.h"
 #include "Entity.h"
 #include "GlobalVariables.h"
+#include "Replay.h"
 #define M_PI 3.14f
 
 class Player : public Entity
@@ -73,7 +74,5 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 	//次のふるまいリクエスト
 	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
-
-	bool isSetJoyState_;
 };
 

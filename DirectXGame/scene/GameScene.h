@@ -16,7 +16,6 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "FollowCamera.h"
-#include "Replay.h"
 
 /// <summary>
 /// ゲームシーン
@@ -44,10 +43,16 @@ public: // メンバ関数
 	/// </summary>
 	void Update();
 
+	void ReplayUpdate();
+
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
+
+public: //ゲッターセッター
+	inline int32_t GetFrame() { return frame_; }
+	inline void SetFrame(int32_t frame) { frame_ = frame; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -75,4 +80,7 @@ private: // メンバ変数
 
 	std::unique_ptr<Model> enemyBodyModel_ = nullptr;
 	std::unique_ptr<Enemy> enemy_ = nullptr;
+
+	//フレーム
+	int32_t frame_;
 };

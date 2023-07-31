@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "Input.h"
 
+class Replay;
+
 class FollowCamera
 {
 public:
@@ -12,7 +14,9 @@ public:
 
 	void Initialize();
 
-	void Update();
+	void InGameUpdate();
+
+	void ReplayUpdate();
 
 public: //ゲッターセッター
 	inline void SetTarget(const WorldTransform* target) { target_ = target; }

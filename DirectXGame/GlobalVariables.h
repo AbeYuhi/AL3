@@ -33,6 +33,8 @@ public:
 	/// <param name="groupName">グループ名</param>
 	void SaveFile(const std::string& groupName);
 
+	void DeletionFile(const std::string& groupName);
+
 	/// <summary>
 	/// ディレクトリの全ファイル読み込み
 	/// </summary>
@@ -62,13 +64,10 @@ public:
 
 	//値の取得
 	int32_t GetIntValue(const std::string& groupName, const std::string& key) const;
+	bool GetIntValue(const std::string& groupName, const std::string& key, int32_t& num);
 	float GetFloatValue(const std::string& groupName, const std::string& key) const;
 	Vector3 GetVector3Value(const std::string& groupName, const std::string& key) const;
-	XINPUT_STATE GetXINPUT_STATEValue(const std::string& groupName, const std::string& key) const;
-
-	//
-	inline unsigned int IsFrame() { return frame_; }
-	inline bool IsReplay() { return isReplay_; }
+	bool GetXINPUT_STATEValue(const std::string& groupName, const std::string& key, XINPUT_STATE* joyState);
 
 	//項目
 	struct Item {
@@ -80,16 +79,6 @@ public:
 	};
 	//全データ
 	std::map<std::string, Group> dates_;
-
-	//フレーム
-	static int32_t frame_;
-
-	//リプレイ中か
-	static bool isReplay_;
-	static bool ReplaInitialize_;
-
-	//コントローラー
-	static XINPUT_STATE joyState_;
 
 private:
 	GlobalVariables() = default;

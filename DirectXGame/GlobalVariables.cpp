@@ -1,14 +1,5 @@
 #include "GlobalVariables.h"
-
-int GlobalVariables::frame_ = 0;
-
-//リプレイ中か
-bool GlobalVariables::isReplay_ = false;
-
-//false固定でいい
-bool GlobalVariables::ReplaInitialize_ = false;
-
-XINPUT_STATE GlobalVariables::joyState_ = {};
+#include "Replay.h"
 
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables instance;
@@ -20,7 +11,6 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 }
 
 void GlobalVariables::Updates() {
-	frame_++;
 
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
@@ -38,30 +28,12 @@ void GlobalVariables::Updates() {
 		Group& group = itGroup->second;
 
 		if (groupName == "Replay") {
-			if (!isReplay_) {
-				std::string str = "currentFrameValue";
-				if (Input::GetInstance()->GetJoystickState(0, joyState_)) {
-					str = "joyState";
-					str += std::to_string(frame_).c_str();
-					SetValue(groupName, str, joyState_);
-				}
+			Replay* replay = Replay::GetInstance();
 
-				//リプレイを始めたいFrameの値
-				if (ImGui::Button("StartReplay")) {
-					SetValue(groupName, "startReplayFrame", frame_);
-				}
-				//リプレイを止めたいFrameの値
-				if (ImGui::Button("EndReplay")) {
-					SetValue(groupName, "endReplayFrame", frame_);
-				}
-
-				SaveFile(groupName);
-			}
-			else {
+			if(replay->IsReplay()) {
 				ImGui::Text("ReplayNow");
 				ImGui::Text("\n");
-				int32_t endFrame = GetIntValue(groupName, "endReplayFrame");
-				ImGui::SliderInt("frame", &frame_, 0, endFrame);
+				ImGui::SliderInt("Frame", replay->frame_, replay->GetStartFrame(), replay->GetEndFrame());
 			}
 		}
 
@@ -182,6 +154,17 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	//ファイルを閉じる
 	ofs.close();
 }
+
+void GlobalVariables::DeletionFile(const std::string& groupName) {
+	//グループの削除
+	dates_.erase(groupName);
+
+	//ファイルの削除
+	std::string stringFilePath = kDirectoryPath + groupName + ".json";
+	const char* filePath = stringFilePath.c_str();
+	remove(filePath);
+}
+
 
 void GlobalVariables::LoadFiles() {
 	//ディレクトリがなければスキップする
@@ -385,6 +368,26 @@ int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::st
 	return std::get<int32_t>(itKey->second.value);
 }
 
+bool GlobalVariables::GetIntValue(const std::string& groupName, const std::string& key, int32_t& num) {
+	//グループを検索
+	std::map<std::string, Group>::const_iterator itGroup = dates_.find(groupName);
+	//未登録チェック
+	assert(itGroup != dates_.end());
+
+	//グループの参照を取得
+	Group group = itGroup->second;
+
+	//キーを検索
+	std::map<std::string, Item>::const_iterator itKey = group.items.find(key);
+
+	if (itKey != group.items.end()) {
+		num = std::get<int32_t>(itKey->second.value);
+		return true;
+	}
+
+	return false;
+}
+
 float GlobalVariables::GetFloatValue(const std::string& groupName, const std::string& key) const {
 	//グループを検索
 	std::map<std::string, Group>::const_iterator itGroup = dates_.find(groupName);
@@ -419,7 +422,7 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	return std::get<Vector3>(itKey->second.value);
 }
 
-XINPUT_STATE GlobalVariables::GetXINPUT_STATEValue(const std::string& groupName, const std::string& key) const {
+bool GlobalVariables::GetXINPUT_STATEValue(const std::string& groupName, const std::string& key, XINPUT_STATE* joyState){
 	//グループを検索
 	std::map<std::string, Group>::const_iterator itGroup = dates_.find(groupName);
 	//未登録チェック
@@ -431,11 +434,19 @@ XINPUT_STATE GlobalVariables::GetXINPUT_STATEValue(const std::string& groupName,
 	//キーを検索
 	std::map<std::string, Item>::const_iterator itKey = group.items.find(key);
 
-	if (itKey == group.items.end() || frame_ >= GetIntValue(groupName, "endReplayFrame")) {
-		frame_ = GetIntValue(groupName, "startReplayFrame");
-		itKey = group.items.find("joyState" + std::to_string(frame_));
-		ReplaInitialize_ = true;
+	//フレームの取得
+	int32_t endframe = Replay::GetInstance()->GetEndFrame();
+	int32_t frame = *Replay::GetInstance()->frame_;
+
+	//エンドフレームを超えたらそこでリプレイ終了
+	if (frame > endframe) {
+		return false;
 	}
 
-	return std::get<XINPUT_STATE>(itKey->second.value);
+	if (itKey != group.items.end()) {
+		*joyState = std::get<XINPUT_STATE>(itKey->second.value);
+		return true;
+	}
+
+	return false;
 }

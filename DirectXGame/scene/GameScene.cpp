@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "Replay.h"
 #include <cassert>
 
 GameScene::GameScene() {}
@@ -12,11 +13,18 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	//カメラ関連
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
-
 	viewProjection_.Initialize();
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
 
+	//フレーム
+	frame_ = 1;
+
+	//OBJファイル読み込み
 	skydomeModel_.reset(Model::CreateFromOBJ("Skydome", true));
 	groundModel_.reset(Model::CreateFromOBJ("Ground", true));
 	playerHeadModel_.reset(Model::CreateFromOBJ("PHead", true));
@@ -26,6 +34,7 @@ void GameScene::Initialize() {
 	playerWeaponModel_.reset(Model::CreateFromOBJ("Hummer", true));
 	enemyBodyModel_.reset(Model::CreateFromOBJ("Enemy", true));
 
+	//インスタンス化
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(skydomeModel_.get());
 
@@ -47,20 +56,67 @@ void GameScene::Initialize() {
 	//セッター
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
-	player_->SetFrame(&GlobalVariables::frame_);
+	player_->SetFrame(&frame_);
 }
 
 void GameScene::Update() {
+	switch (Replay::GetInstance()->GetGemeStatus())
+	{
+	case Replay::GameStatus::kInGame:
+		followCamera_->InGameUpdate();
+		Replay::GetInstance()->SaveUpdate();
+		break;
+	case Replay::GameStatus::kReplay:
+		followCamera_->ReplayUpdate();
+		Replay::GetInstance()->ReplayUpdate();
+		break;
+	case Replay::GameStatus::kNone:
+	default:
+		Replay::GetInstance()->SetFrame(&frame_);
+		ImGui::Begin("Play or Replay");
+		if (ImGui::Button("Play")) {
+			Replay::GetInstance()->InitializeSave();
+			Replay::GetInstance()->SetGemeStatus(Replay::GameStatus::kInGame);
+		}
+		if (ImGui::Button("Replay")) {
+			Replay::GetInstance()->InitializeReplay();
+			GlobalVariables::GetInstance()->LoadFiles();
+			Replay::GetInstance()->SetGemeStatus(Replay::GameStatus::kReplay);
+		}
+		ImGui::End();
 
-	followCamera_->Update();
+		return;
+		break;
+	}
+
+	//最初の選択に戻るか
+	if (Replay::GetInstance()->GetJoyState().Gamepad.bLeftTrigger) {
+		Replay::GetInstance()->EndInGame();
+		Initialize();
+		Replay::GetInstance()->SetGemeStatus(Replay::GameStatus::kNone);
+		return;
+	}
+
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	skydome_->Update();	
-	ground_->Update();	
-	player_->Update();	
+	skydome_->Update();
+	ground_->Update();
+	player_->Update();
 	enemy_->Update();
+
+	frame_++;
+}
+
+void GameScene::ReplayUpdate() {
+
+	skydome_->Update();
+	ground_->Update();
+	player_->Update();
+	enemy_->Update();
+
+	frame_++;
 }
 
 void GameScene::Draw() {

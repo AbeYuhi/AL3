@@ -58,10 +58,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	primitiveDrawer->Initialize();
 #pragma endregion
 
-	GlobalVariables* globalVaruables = GlobalVariables::GetInstance();
-	const char* groupName = "Replay";
-	globalVaruables->CreateGroup(groupName);
-
 	//グローバル変数の読み込み
 	GlobalVariables::GetInstance()->LoadFiles();
 
@@ -69,16 +65,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene = new GameScene();
 	gameScene->Initialize();
 
-	if (GlobalVariables::isReplay_) {
-		for (int i = 0; i < GlobalVariables::GetInstance()->GetIntValue("Replay", "startReplayFrame"); i++) {
-			gameScene->Update();
-		}
-	}
+	Replay::GetInstance()->Initialize(gameScene);
 
 	// メインループ
 	while (true) {
 		// メッセージ処理
 		if (win->ProcessMessage()) {
+			Replay::GetInstance()->EndInGame();
 			break;
 		}
 
@@ -88,10 +81,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		input->Update();
 		//グローバル変数の更新
 		GlobalVariables::GetInstance()->Updates();
-		if (GlobalVariables::ReplaInitialize_) {
-			GlobalVariables::ReplaInitialize_ = false;
-			gameScene->Initialize();
-		}
 		// ゲームシーンの毎フレーム処理
 		gameScene->Update();
 		// 軸表示の更新

@@ -8,6 +8,8 @@ void Enemy::Initialize(const std::vector<Model*>& models) {
 	Entity::Initialize(models);
 
 	worldTransform_.translation_.z = 15;
+
+	worldTransform_.UpdateMatrix();
 }
 
 void Enemy::Update() {

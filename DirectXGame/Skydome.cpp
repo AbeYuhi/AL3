@@ -7,6 +7,8 @@ void Skydome::Initialize(Model* model) {
 	worldTransform_.Initialize();
 	model_ = model;
 
+	//行列の転送
+	worldTransform_.UpdateMatrix();
 }
 
 void Skydome::Update() {

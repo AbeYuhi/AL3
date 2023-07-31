@@ -19,6 +19,8 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	InitializeFloatingGimmick();
 	InitializeAttackGimmick();
 
+	ApplyGlobalVariables();
+
 	GlobalVariables* globalVaruables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
 	//グループを追加
@@ -29,6 +31,14 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	globalVaruables->AddValue(groupName, "floatingCycle", cycle_);
 	globalVaruables->AddValue(groupName, "swingWidth", swingWidth_);
 	globalVaruables->AddValue(groupName, "attackCycle", attackCycle_);
+
+	//行列の更新
+	worldTransform_.UpdateMatrix();
+	worldTransformBody_.UpdateMatrix();
+	worldTransformHead_.UpdateMatrix();
+	worldTransformLeftArm_.UpdateMatrix();
+	worldTransformRightArm_.UpdateMatrix();
+	worldTransformWeapon_.UpdateMatrix();
 }
 
 void Player::ApplyGlobalVariables() {
@@ -79,8 +89,6 @@ void Player::Update() {
 	worldTransformLeftArm_.UpdateMatrix();
 	worldTransformRightArm_.UpdateMatrix();
 	worldTransformWeapon_.UpdateMatrix();
-
-	isSetJoyState_ = false;
 }
 
 void Player::Draw(ViewProjection viewProjection) {
@@ -110,44 +118,35 @@ void Player::UpdateFloatingGimmick() {
 }
 
 void Player::BehaviorRootUpdata() {
-	GlobalVariables* globalVaruables = GlobalVariables::GetInstance();
-	if (!GlobalVariables::isReplay_) {
-		isSetJoyState_ = Input::GetInstance()->GetJoystickState(0, GlobalVariables::joyState_);
-	}
-	else {
-		GlobalVariables::joyState_ = globalVaruables->GetXINPUT_STATEValue("Replay", "joyState" + std::to_string(GlobalVariables::frame_));
-		isSetJoyState_ = true;
+	Replay* replay = Replay::GetInstance();
+
+	//攻撃入力
+	if (replay->GetJoyState().Gamepad.bRightTrigger) {
+		behaviorRequest_ = Player::Behavior::kAttack;
 	}
 
-	if (isSetJoyState_) {
-		//攻撃入力
-		if (GlobalVariables::joyState_.Gamepad.bRightTrigger) {
-			behaviorRequest_ = Player::Behavior::kAttack;
-		}
+	//スピード
+	const float speed = 0.3f;
+	//移動量
+	Vector3 move = {
+		(float)replay->GetJoyState().Gamepad.sThumbLX, 0.0f, (float)replay->GetJoyState().Gamepad.sThumbLY
+	};
+	//移動量を速さに反映
+	move = Normalize(move) * speed;
 
-		//スピード
-		const float speed = 0.3f;
-		//移動量
-		Vector3 move = {
-			(float)GlobalVariables::joyState_.Gamepad.sThumbLX, 0.0f, (float)GlobalVariables::joyState_.Gamepad.sThumbLY
-		};
-		//移動量を速さに反映
-		move = Normalize(move) * speed;
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(0.0f);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(viewProjection_->rotation_.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(0.0f);
 
-		Matrix4x4 rotateXMatrix = MakeRotateXMatrix(0.0f);
-		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(viewProjection_->rotation_.y);
-		Matrix4x4 rotateZMatrix = MakeRotateZMatrix(0.0f);
+	Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotateXMatrix, rotateYMatrix, rotateZMatrix);
 
-		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotateXMatrix, rotateYMatrix, rotateZMatrix);
+	move = TransformNormal(move, rotateMatrix);
 
-		move = TransformNormal(move, rotateMatrix);
+	//回転
+	worldTransform_.rotation_.y = atan2f(move.x, move.z);
 
-		//回転
-		worldTransform_.rotation_.y = atan2f(move.x, move.z);
-
-		//移動
-		worldTransform_.translation_ += move;
-	}
+	//移動
+	worldTransform_.translation_ += move;
 
 	UpdateFloatingGimmick();
 }

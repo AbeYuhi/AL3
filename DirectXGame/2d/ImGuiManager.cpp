@@ -59,7 +59,6 @@ void ImGuiManager::Begin() {
 }
 
 void ImGuiManager::End() {
-
 	// 描画前準備
 	ImGui::Render();
 }
