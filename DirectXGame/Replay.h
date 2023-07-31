@@ -66,7 +66,7 @@ private:
 	//操作記録
 	//コントローラー
 	XINPUT_STATE joyState_;
-	
+
 	//リプレイ
 	GameStatus gameStatus_;
 	bool isReplay_;

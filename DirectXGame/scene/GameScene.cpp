@@ -67,7 +67,7 @@ void GameScene::Update() {
 		Replay::GetInstance()->SaveUpdate();
 		break;
 	case Replay::GameStatus::kReplay:
-		followCamera_->ReplayUpdate();
+		followCamera_->InGameUpdate();
 		Replay::GetInstance()->ReplayUpdate();
 		break;
 	case Replay::GameStatus::kNone:
@@ -110,6 +110,10 @@ void GameScene::Update() {
 }
 
 void GameScene::ReplayUpdate() {
+	followCamera_->InGameUpdate();
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
 
 	skydome_->Update();
 	ground_->Update();
